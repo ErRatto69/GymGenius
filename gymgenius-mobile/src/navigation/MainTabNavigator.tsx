@@ -1,16 +1,18 @@
 ﻿import React from 'react';
-import { HomeScreen } from '../screens/HomeScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { LayoutDashboard, Dumbbell, Utensils, Sparkles, TrendingUp, User } from 'lucide-react-native';
+import { LayoutDashboard, User, Dumbbell, Utensils } from 'lucide-react-native';
+import { HomeScreen } from '../screens/HomeScreen';
+import { ProfileScreen } from '../screens/ProfileScreen'; // Importa la nuova schermata
 import { View, Text } from 'react-native';
 
-const PlaceholderScreen = ({ name }: { name: string }) => (
-    <View>
-        <Text>{name}</Text>
+const Tab = createBottomTabNavigator();
+
+// Placeholder temporanei per le altre sezioni
+const Placeholder = ({ name }: { name: string }) => (
+    <View className="flex-1 bg-black items-center justify-center">
+        <Text className="text-white text-xl">{name} in arrivo...</Text>
     </View>
 );
-
-const Tab = createBottomTabNavigator();
 
 export function MainTabNavigator() {
     return (
@@ -18,54 +20,44 @@ export function MainTabNavigator() {
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
-                    backgroundColor: '#000000',
+                    backgroundColor: '#000',
                     borderTopWidth: 1,
                     borderTopColor: '#27272a',
-                    height: 85,
-                    paddingBottom: 25,
-                    paddingTop: 10,
-                    position: 'absolute', // Per dare l'effetto floating/trasparente in futuro
+                    height: 70,
+                    paddingBottom: 12,
+                    paddingTop: 8,
                 },
-                tabBarActiveTintColor: '#22d3ee', // Cyan-400
-                tabBarInactiveTintColor: '#71717a', // Zinc-500
-                tabBarShowLabel: true,
-                tabBarLabelStyle: {
-                    fontSize: 10,
-                    fontFamily: 'Inter', // Assicurati di caricare i font in futuro
-                    textTransform: 'uppercase',
-                    marginTop: 4,
-                }
+                tabBarActiveTintColor: '#22d3ee',
+                tabBarInactiveTintColor: '#71717a',
             }}
         >
             <Tab.Screen
                 name="Home"
                 component={HomeScreen}
-                options={{ tabBarIcon: ({ color, size }) => <LayoutDashboard color={color} size={size} /> }}
+                options={{
+                    tabBarIcon: ({ color, size }) => <LayoutDashboard color={color} size={size} />,
+                }}
             />
             <Tab.Screen
-                name="Scheda"
-                children={() => <PlaceholderScreen name="Scheda" />}
-                options={{ tabBarIcon: ({ color, size }) => <Dumbbell color={color} size={size} /> }}
+                name="Allenamenti"
+                component={() => <Placeholder name="Workouts" />}
+                options={{
+                    tabBarIcon: ({ color, size }) => <Dumbbell color={color} size={size} />,
+                }}
             />
             <Tab.Screen
                 name="Dieta"
-                children={() => <PlaceholderScreen name="Dieta" />}
-                options={{ tabBarIcon: ({ color, size }) => <Utensils color={color} size={size} /> }}
-            />
-            <Tab.Screen
-                name="AI Lab"
-                children={() => <PlaceholderScreen name="AI Lab" />}
-                options={{ tabBarIcon: ({ color, size }) => <Sparkles color={color} size={size} /> }}
-            />
-            <Tab.Screen
-                name="Progressi"
-                children={() => <PlaceholderScreen name="Progressi" />}
-                options={{ tabBarIcon: ({ color, size }) => <TrendingUp color={color} size={size} /> }}
+                component={() => <Placeholder name="Pasti" />}
+                options={{
+                    tabBarIcon: ({ color, size }) => <Utensils color={color} size={size} />,
+                }}
             />
             <Tab.Screen
                 name="Profilo"
-                children={() => <PlaceholderScreen name="Profilo" />}
-                options={{ tabBarIcon: ({ color, size }) => <User color={color} size={size} /> }}
+                component={ProfileScreen}
+                options={{
+                    tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
+                }}
             />
         </Tab.Navigator>
     );
