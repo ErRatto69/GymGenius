@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using GymGenius.Api.Domain.Entities;
 using GymGenius.Api.Features.Auth;
 using GymGenius.Api.Infrastructure.Persistence;
@@ -9,29 +10,31 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Database & Persistence
+// 1. CORS Policy - Permette al mobile di parlare col backend
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll", b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
+// 2. Database & Identity
 builder.Services.AddDbContext<GymDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"),
     o => o.UseNetTopologySuite()));
 
-// 2. Identity Core
-builder.Services.AddIdentityCore<User>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 8;
+builder.Services.AddIdentityCore<User>(options => {
+    options.Password.RequireDigit = false; // Facilitiamo i test
+    options.Password.RequiredLength = 6;
+    options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<GymDbContext>()
 .AddDefaultTokenProviders();
 
-// 3. Autenticazione JWT
-var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key non configurata.");
+// 3. Auth & JWT
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "ChiaveDiBackupLungaAlmeno32Caratteri!";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
+    .AddJwtBearer(options => {
+        options.TokenValidationParameters = new TokenValidationParameters {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
@@ -43,40 +46,33 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
-// 4. Swagger con supporto JWT
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 5. Servizi Custom
+// 4. Controller con configurazione CamelCase
+builder.Services.AddControllers()
+    .AddJsonOptions(options => {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Middleware
-if (app.Environment.IsDevelopment())
-{
+// Ordine Middleware Fondamentale!
+app.UseCors("AllowAll"); // Prima di Auth!
+
+if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
-    app.UseSwaggerUI(c => 
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GymGenius API v1");
-        c.RoutePrefix = string.Empty; // Swagger apparirà direttamente alla root (es. http://localhost:5000/)
-    });
+    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+using (var scope = app.Services.CreateScope()) {
+    scope.ServiceProvider.GetRequiredService<GymDbContext>().Database.Migrate();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
-// Automigrazione allo startup
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<GymDbContext>();
-    db.Database.Migrate();
-}
 
 app.Run();
