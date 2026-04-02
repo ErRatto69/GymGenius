@@ -8,12 +8,16 @@ public class User : IdentityUser
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     
-    // Dati fisici
+    // Dati fisici (opzionali in fase di registrazione)
     public double? Weight { get; set; }
     public double? Height { get; set; }
     
-    // Posizione per "Trova amici in zona" (Longitudine, Latitudine)
+    // Predisposizione futura Social (PostGIS)
     public Point? Location { get; set; }
     
+    // Gestione Sessione Stateless
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiryTime { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
