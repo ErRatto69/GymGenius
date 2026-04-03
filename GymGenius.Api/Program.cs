@@ -10,18 +10,16 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. CORS Policy - Permette al mobile di parlare col backend
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowAll", b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-// 2. Database & Identity
 builder.Services.AddDbContext<GymDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"),
     o => o.UseNetTopologySuite()));
 
 builder.Services.AddIdentityCore<User>(options => {
-    options.Password.RequireDigit = false; // Facilitiamo i test
+    options.Password.RequireDigit = false;
     options.Password.RequiredLength = 6;
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
@@ -30,7 +28,6 @@ builder.Services.AddIdentityCore<User>(options => {
 .AddEntityFrameworkStores<GymDbContext>()
 .AddDefaultTokenProviders();
 
-// 3. Auth & JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ChiaveDiBackupLungaAlmeno32Caratteri!";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => {
@@ -49,7 +46,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 4. Controller con configurazione CamelCase
 builder.Services.AddControllers()
     .AddJsonOptions(options => {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -59,8 +55,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
-// Ordine Middleware Fondamentale!
-app.UseCors("AllowAll"); // Prima di Auth!
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
