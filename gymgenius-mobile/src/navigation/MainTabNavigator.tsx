@@ -2,7 +2,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { LayoutDashboard, User, Dumbbell, Utensils } from 'lucide-react-native';
 import { HomeScreen } from '../screens/HomeScreen';
-import { ProfileScreen } from '../screens/ProfileScreen'; // Importa la nuova schermata
+import { ProfileScreen } from '../screens/ProfileScreen';
+import { SplitsScreen } from '../screens/SplitsScreen';
 import { View, Text } from 'react-native';
 
 const Tab = createBottomTabNavigator();
@@ -40,7 +41,7 @@ export function MainTabNavigator() {
             />
             <Tab.Screen
                 name="Allenamenti"
-                component={() => <Placeholder name="Workouts" />}
+                component={SplitsScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => <Dumbbell color={color} size={size} />,
                 }}

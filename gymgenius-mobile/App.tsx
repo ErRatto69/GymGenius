@@ -10,6 +10,7 @@ import { useAuthStore } from './src/store/useAuthStore';
 import { MainTabNavigator } from './src/navigation/MainTabNavigator';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';
+import {CreateSplitScreen} from "./src/screens/CreateSplitScreen";
 
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
@@ -35,7 +36,11 @@ export default function App() {
                 <NavigationContainer>
                     <Stack.Navigator screenOptions={{ headerShown: false }}>
                         {token ? (
-                            <Stack.Screen name="Main" component={MainTabNavigator} />
+                            <>
+                                <Stack.Screen name="Main" component={MainTabNavigator} />
+                                {}
+                                <Stack.Screen name="CreateSplit" component={CreateSplitScreen} />
+                            </>
                         ) : (
                             <>
                                 <Stack.Screen name="Login" component={LoginScreen} />
