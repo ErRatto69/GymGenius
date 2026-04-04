@@ -33,7 +33,7 @@ public class WorkoutsController : ControllerBase
             Description = request.Description,
             Goal = request.Goal,
             CycleLengthDays = request.CycleLengthDays,
-            IsAiGenerated = false, // Per ora le creiamo manualmente
+            IsAiGenerated = false,
             Workouts = request.Workouts.Select(w => new Workout
             {
                 Name = w.Name,
@@ -105,5 +105,28 @@ public class WorkoutsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok(new { Message = "Scheda eliminata." });
+    }
+    
+    [HttpPost("splits/{splitId}/workouts")]
+    public async Task<IActionResult> AddWorkoutToSplit(Guid splitId, [FromBody] CreateWorkoutDto request)
+    {
+        var userId = GetUserId();
+        var split = await _context.Splits.FirstOrDefaultAsync(s => s.Id == splitId && s.UserId == userId);
+        
+        if (split == null) return NotFound("Scheda non trovata.");
+
+        var workout = new Workout
+        {
+            SplitId = splitId,
+            Name = request.Name,
+            DayOrder = request.Order,
+            Notes = request.Notes,
+            Exercises = new List<Exercise>() // Parte vuoto!
+        };
+
+        _context.Workouts.Add(workout);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { Message = "Allenamento aggiunto!", WorkoutId = workout.Id });
     }
 }
