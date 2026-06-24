@@ -3,6 +3,7 @@ using System.Text.Json;
 using GymGenius.Api.Domain.Entities;
 using GymGenius.Api.Features.Auth;
 using GymGenius.Api.Infrastructure.Persistence;
+using GymGenius.Api.Infrastructure.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +53,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers()
     .AddJsonOptions(options => {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.Converters.Add(new TrimStringConverter());
     });
 
 builder.Services.AddScoped<ITokenService, TokenService>();
