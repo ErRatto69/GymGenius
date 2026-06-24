@@ -10,7 +10,6 @@ export function SplitsScreen({ navigation, route }: any) {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedSplitId, setSelectedSplitId] = useState<string | null>(null);
 
-    // Stati del form del modale
     const [workoutName, setWorkoutName] = useState('');
     const [dayOrder, setDayOrder] = useState('1');
     const [isAdding, setIsAdding] = useState(false);
@@ -20,11 +19,9 @@ export function SplitsScreen({ navigation, route }: any) {
         queryFn: getMySplits,
     });
 
-    // Intercetta se veniamo dal bivio della pagina di creazione
     useEffect(() => {
         if (route.params?.openModalForSplitId) {
             openAddModal(route.params.openModalForSplitId);
-            // Pulisci i parametri così non si riapre da solo in futuro
             navigation.setParams({ openModalForSplitId: null });
         }
     }, [route.params?.openModalForSplitId]);
@@ -44,7 +41,6 @@ export function SplitsScreen({ navigation, route }: any) {
                 name: workoutName,
                 dayOrder: parseInt(dayOrder) || 1
             });
-            // Aggiorniamo la lista in background
             queryClient.invalidateQueries({ queryKey: ['splits'] });
             setModalVisible(false);
             Alert.alert("Aggiunto", "Allenamento inserito nella scheda!");
@@ -55,6 +51,28 @@ export function SplitsScreen({ navigation, route }: any) {
         }
     };
 
+    const handleDelete = (id: string, title: string) => {
+        Alert.alert(
+            "Elimina Scheda",
+            `Sei sicuro di voler eliminare definitivamente "${title}" e tutti i suoi allenamenti?`,
+            [
+                { text: "Annulla", style: "cancel" },
+                {
+                    text: "Elimina",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            await deleteSplit(id);
+                            queryClient.invalidateQueries({ queryKey: ['splits'] });
+                        } catch (e) {
+                            Alert.alert("Errore", "Impossibile eliminare la scheda.");
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     const renderSplitCard = ({ item }: { item: SplitSummary }) => (
         <View className="bg-zinc-900 rounded-2xl p-5 mb-4 border border-zinc-800">
             <View className="flex-row items-center justify-between mb-4">
@@ -63,7 +81,7 @@ export function SplitsScreen({ navigation, route }: any) {
                     <Text className="text-white text-xl font-bold">{item.title}</Text>
                     <Text className="text-zinc-400 text-sm">Ciclo di {item.cycleLengthDays} giorni</Text>
                 </View>
-                <TouchableOpacity onPress={() => {/* Metti qui logica delete */}} className="p-2">
+                <TouchableOpacity onPress={() => handleDelete(item.id, item.title)} className="p-2">
                     <Trash2 size={20} color="#ef4444" />
                 </TouchableOpacity>
             </View>
@@ -77,7 +95,6 @@ export function SplitsScreen({ navigation, route }: any) {
                     <Text className="text-white font-bold text-sm">Vedi Dettagli</Text>
                 </TouchableOpacity>
 
-                {/* BOTTONE PER AGGIUNGERE ALLENAMENTO */}
                 <TouchableOpacity
                     className="flex-1 bg-cyan-500/10 py-3 rounded-xl flex-row items-center justify-center border border-cyan-500/30"
                     onPress={() => openAddModal(item.id)}

@@ -7,6 +7,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, ActivityIndicator } from 'react-native';
 
 import { useAuthStore } from './src/store/useAuthStore';
+
+import './src/libs/i18n';
+
 import { MainTabNavigator } from './src/navigation/MainTabNavigator';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';

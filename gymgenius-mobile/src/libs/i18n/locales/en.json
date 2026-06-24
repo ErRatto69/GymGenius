@@ -1,0 +1,30 @@
+﻿{
+  "common": {
+    "welcomeBack": "Welcome back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "home": {
+    "nextWorkout": "Next Workout",
+    "today": "Today",
+    "workouts": "Workouts",
+    "calories": "Calories",
+    "weight": "Weight"
+  },
+  "profile": {
+    "title": "Your Profile",
+    "logout": "Log out",
+    "language": "App Language",
+    "updateSuccess": "Profilo aggiornato!",
+    "updateError": "Impossibile aggiornare il profilo.",
+    "physicalDetails": "Physical details (comma)",
+    "objective": "Main objective"
+  },
+  "nav": {
+    "training": "Training",
+    "diet": "Diet",
+    "aiLab": "AI Lab",
+    "profile": "Profile"
+  }
+}

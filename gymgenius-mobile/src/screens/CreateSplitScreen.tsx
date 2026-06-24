@@ -31,7 +31,6 @@ export function CreateSplitScreen({ navigation }: any) {
     const [workoutName, setWorkoutName] = useState('');
     const [dayOrder, setDayOrder] = useState('1');
 
-    // === FUNZIONI PER IL MODALE ===
     const openAddModal = () => {
         setWorkoutName('');
         setDayOrder(String(localWorkouts.length + 1)); // Suggerisce in automatico il giorno successivo
@@ -68,13 +67,11 @@ export function CreateSplitScreen({ navigation }: any) {
         setLocalWorkouts(updated);
     };
 
-    // === CHIAMATA AL BACKEND (Richiesta Unica) ===
     const handleSubmitSplit = async () => {
         if (!title.trim()) return Alert.alert("Errore", "Inserisci il nome della scheda.");
         setLoading(true);
 
         try {
-            // Formattiamo il payload ESATTAMENTE come lo vuole C#
             const payload = {
                 title,
                 goal,
@@ -82,7 +79,7 @@ export function CreateSplitScreen({ navigation }: any) {
                 workouts: localWorkouts.map(w => ({
                     name: w.name,
                     dayOrder: parseInt(w.dayOrder) || 1,
-                    exercises: [] // FONDAMENTALE: Passare la lista vuota per non far crashare .NET
+                    exercises: []
                 }))
             };
 
@@ -94,7 +91,6 @@ export function CreateSplitScreen({ navigation }: any) {
             ]);
 
         } catch (error: any) {
-            // Ora estraiamo l'errore esatto mandato dal backend
             console.log("Errore API:", error.response?.data);
             const errorMsg = error.response?.data?.errors
                 ? JSON.stringify(error.response.data.errors)
@@ -163,7 +159,6 @@ export function CreateSplitScreen({ navigation }: any) {
                         </View>
                     </View>
 
-                    {/* LISTA DEGLI ALLENAMENTI (In Memoria) */}
                     <View className="mb-8">
                         <View className="flex-row justify-between items-center mb-4">
                             <Text className="text-white text-xl font-bold">Allenamenti ({localWorkouts.length})</Text>
@@ -191,7 +186,6 @@ export function CreateSplitScreen({ navigation }: any) {
                         </TouchableOpacity>
                     </View>
 
-                    {/* BOTTONE SALVA SCHEDA FINALE */}
                     <TouchableOpacity
                         onPress={handleSubmitSplit}
                         disabled={!title.trim() || loading}

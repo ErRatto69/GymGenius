@@ -13,7 +13,7 @@ interface StatCardProps {
 export function StatCard({ title, value, subtitle, Icon, iconColor = "#22d3ee" }: StatCardProps) {
     return (
         <View className="bg-zinc-900 p-4 rounded-2xl flex-1 mx-1 border border-zinc-800">
-            <View className="flex-row items-center justify-between mb-2">
+            <View className="flex-row justify-between mb-2">
                 <Text className="text-zinc-400 text-sm font-medium">{title}</Text>
                 <Icon size={18} color={iconColor} />
             </View>

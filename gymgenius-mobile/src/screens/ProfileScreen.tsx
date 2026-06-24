@@ -1,12 +1,55 @@
 ﻿import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../store/useAuthStore';
 import apiClient from '../api/client';
-import { LogOut, Check, X, Edit3 } from 'lucide-react-native';
+import {LogOut, Check, X, Edit3, Languages, Search} from 'lucide-react-native';
+import {useTranslation} from "react-i18next";
+import {Dropdown} from "react-native-element-dropdown";
 
 const GOALS = ["Dimagrimento", "Ipertrofia", "Forza", "Mantenimento"];
 const EQUIPMENT = ["Palestra Completa", "Pesi a Casa", "Corpo Libero"];
+const LANGUAGES_DATA = [
+    { code: 'it', label: 'Italiano', flag: '🇮🇹' },
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+];
+
+const styles = StyleSheet.create({
+    dropdown: {
+        height: 64,
+        backgroundColor: '#18181b',
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: '#27272a',
+    },
+    dropdownContainer: {
+        backgroundColor: 'black',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#27272a',
+        marginTop: 8,
+        overflow: 'hidden',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+    },
+    dropdownItemContainer: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#18181b',
+    },
+    dropdownSearchInput: {
+        height: 50,
+        backgroundColor: '#18181b',
+        color: 'white',
+        borderRadius: 12,
+        borderColor: '#27272a',
+        fontSize: 16,
+        paddingHorizontal: 10,
+    },
+});
 
 const EditableInput = ({ label, value, onChange, isEditing }: any) => (
     <View className="mb-4">
@@ -34,9 +77,12 @@ const ChipSelector = ({ label, options, selected, onSelect, isEditing }: any) =>
 );
 
 export function ProfileScreen() {
-    const { user, logout, updateUser } = useAuthStore();
+    const { t } = useTranslation();
+
+    const { user, logout, updateUser, language, setLanguage } = useAuthStore();
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [isDropdownFocus, setIsDropdownFocus] = useState(false);
 
     const [form, setForm] = useState({
         firstName: user?.firstName || '', lastName: user?.lastName || '',
@@ -50,8 +96,10 @@ export function ProfileScreen() {
     const handleSave = async () => {
         setLoading(true);
         const payload = {
-            firstName: form.firstName, lastName: form.lastName,
-            fitnessGoal: form.fitnessGoal, availableEquipment: form.availableEquipment,
+            firstName: form.firstName.trim(),
+            lastName: form.lastName.trim(),
+            fitnessGoal: form.fitnessGoal,
+            availableEquipment: form.availableEquipment,
             preferredFoods: form.preferredFoods.split(',').map(s => s.trim()).filter(Boolean),
             dislikedFoods: form.dislikedFoods.split(',').map(s => s.trim()).filter(Boolean),
             allergies: form.allergies.split(',').map(s => s.trim()).filter(Boolean),
@@ -80,6 +128,34 @@ export function ProfileScreen() {
         setIsEditing(false);
     };
 
+    const renderDropdownLabel = () => {
+        const selectedLang = LANGUAGES_DATA.find(item => item.code === language);
+        if (selectedLang) {
+            return (
+                <View className="flex-row items-center gap-x-3">
+                    <Text className="text-2xl">{selectedLang.flag}</Text>
+                    <Text className="text-white text-lg font-medium">{selectedLang.label}</Text>
+                </View>
+            );
+        }
+        return <Text className="text-zinc-600 text-lg">{t('profile.placeholderLang')}</Text>;
+    };
+
+    const renderDropdownItem = (item: any) => {
+        const isSelected = item.code === language;
+        return (
+            <View className={`flex-row items-center justify-between p-4 ${isSelected ? 'bg-cyan-500/10' : 'bg-black'}`}>
+                <View className="flex-row items-center gap-x-4">
+                    <Text className="text-3xl">{item.flag}</Text>
+                    <Text className={`text-lg ${isSelected ? 'text-cyan-400 font-bold' : 'text-zinc-300'}`}>
+                        {item.label}
+                    </Text>
+                </View>
+                {isSelected && <Check size={20} color="#22d3ee" />}
+            </View>
+        );
+    };
+
     return (
         <SafeAreaView className="flex-1 bg-black">
             <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 60 }} keyboardShouldPersistTaps="handled">
@@ -101,6 +177,36 @@ export function ProfileScreen() {
                     )}
                 </View>
 
+                <View className="mb-10 mt-4">
+                    <View className="flex-row items-center mb-3 ml-1">
+                        <Languages size={16} color="#22d3ee" />
+                        <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest ml-2">
+                            {t('profile.language')}
+                        </Text>
+                    </View>
+
+                    <Dropdown
+                        style={[styles.dropdown, isDropdownFocus && { borderColor: '#22d3ee' }]}
+                        containerStyle={styles.dropdownContainer}
+                        itemContainerStyle={styles.dropdownItemContainer}
+                        data={LANGUAGES_DATA}
+                        labelField="label"
+                        valueField="code"
+                        value={language}
+                        placeholder={!isDropdownFocus ? t('profile.placeholderLang') : '...'}
+                        onFocus={() => setIsDropdownFocus(true)}
+                        onBlur={() => setIsDropdownFocus(false)}
+                        onChange={item => {
+                            setLanguage(item.code);
+                            setIsDropdownFocus(false);
+                        }}
+                        selectedTextStyle={{ display: 'none' }}
+                        renderLeftIcon={renderDropdownLabel}
+                        renderItem={renderDropdownItem}
+                        activeColor="transparent"
+                    />
+                </View>
+
                 {isEditing && (
                     <View className="flex-row gap-4">
                         <View className="flex-1"><EditableInput label="Nome" value={form.firstName} onChange={(t:string) => setForm({...form, firstName: t})} isEditing={isEditing} /></View>
@@ -108,10 +214,10 @@ export function ProfileScreen() {
                     </View>
                 )}
 
-                <ChipSelector label="Obiettivo Principale" options={GOALS} selected={form.fitnessGoal} onSelect={(val:string) => setForm({...form, fitnessGoal: val})} isEditing={isEditing} />
+                <ChipSelector label={t("profile.objective")} options={GOALS} selected={form.fitnessGoal} onSelect={(val:string) => setForm({...form, fitnessGoal: val})} isEditing={isEditing} />
                 <ChipSelector label="Attrezzatura Base" options={EQUIPMENT} selected={form.availableEquipment} onSelect={(val:string) => setForm({...form, availableEquipment: val})} isEditing={isEditing} />
 
-                <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-4 mb-3">Dettagli Fisiologici (Virgola)</Text>
+                <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-4 mb-3">{t("profile.physicalDetails")}</Text>
                 <EditableInput label="Infortuni / Problemi" value={form.injuries} onChange={(t:string) => setForm({...form, injuries: t})} isEditing={isEditing} />
                 <EditableInput label="Allergie / Intolleranze" value={form.allergies} onChange={(t:string) => setForm({...form, allergies: t})} isEditing={isEditing} />
                 <EditableInput label="Cibi Preferiti" value={form.preferredFoods} onChange={(t:string) => setForm({...form, preferredFoods: t})} isEditing={isEditing} />

@@ -1,8 +1,19 @@
 ﻿import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView
+} from 'react-native';
 import { useAuthStore } from '../store/useAuthStore';
 import apiClient from '../api/client';
 import { User as UserIcon, Lock, LogIn } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 export function LoginScreen({ navigation }: any) {
     const [usernameOrEmail, setUsernameOrEmail] = useState('');

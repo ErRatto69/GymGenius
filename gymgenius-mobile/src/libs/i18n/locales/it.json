@@ -1,0 +1,30 @@
+﻿{
+  "common": {
+    "welcomeBack": "Bentornato",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina"
+  },
+  "home": {
+    "nextWorkout": "Prossimo Allenamento",
+    "today": "Oggi",
+    "workouts": "Allenamenti",
+    "calories": "Calorie",
+    "weight": "Peso"
+  },
+  "profile": {
+    "title": "Il tuo Profilo",
+    "logout": "Esci dall'account",
+    "language": "Lingua dell'App",
+    "updateSuccess": "Profilo aggiornato!",
+    "updateError": "Impossibile aggiornare il profilo.",
+    "physicalDetails": "Dettagli fisiologici (virgola)",
+    "objective": "Obiettivo principale"
+  },
+  "nav": {
+    "training": "Allenamenti",
+    "diet": "Dieta",
+    "aiLab": "AI Lab",
+    "profile": "Profilo"
+  }
+}

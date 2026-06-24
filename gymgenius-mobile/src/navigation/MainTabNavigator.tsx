@@ -1,14 +1,20 @@
 ﻿import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { LayoutDashboard, User, Dumbbell, Utensils } from 'lucide-react-native';
+import {
+    LayoutDashboard,
+    User,
+    Dumbbell,
+    Utensils,
+    Brain
+} from 'lucide-react-native';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { SplitsScreen } from '../screens/SplitsScreen';
 import { View, Text } from 'react-native';
+import {useTranslation} from "react-i18next";
 
 const Tab = createBottomTabNavigator();
 
-// Placeholder temporanei per le altre sezioni
 const Placeholder = ({ name }: { name: string }) => (
     <View className="flex-1 bg-black items-center justify-center">
         <Text className="text-white text-xl">{name} in arrivo...</Text>
@@ -16,6 +22,8 @@ const Placeholder = ({ name }: { name: string }) => (
 );
 
 export function MainTabNavigator() {
+    const { t } = useTranslation();
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -40,21 +48,28 @@ export function MainTabNavigator() {
                 }}
             />
             <Tab.Screen
-                name="Allenamenti"
+                name={t('nav.training')}
                 component={SplitsScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => <Dumbbell color={color} size={size} />,
                 }}
             />
             <Tab.Screen
-                name="Dieta"
+                name={t('nav.diet')}
                 component={() => <Placeholder name="Pasti" />}
                 options={{
                     tabBarIcon: ({ color, size }) => <Utensils color={color} size={size} />,
                 }}
             />
             <Tab.Screen
-                name="Profilo"
+                name={t('nav.aiLab')}
+                component={() => <Placeholder name="AI Lab" />}
+                options={{
+                    tabBarIcon: ({ color, size }) => <Brain color={color} size={size} />,
+                }}
+            />
+            <Tab.Screen
+                name={t('nav.profile')}
                 component={ProfileScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
