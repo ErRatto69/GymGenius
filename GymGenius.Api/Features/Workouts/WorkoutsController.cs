@@ -37,7 +37,7 @@ public class WorkoutsController : ControllerBase
             Workouts = request.Workouts.Select(w => new Workout
             {
                 Name = w.Name,
-                DayOrder = w.Order,
+                DayOrder = w.DayOrder, // Corretto da w.Order a w.DayOrder
                 Notes = w.Notes,
                 Exercises = w.Exercises.Select(e => new Exercise
                 {
@@ -119,7 +119,7 @@ public class WorkoutsController : ControllerBase
         {
             SplitId = splitId,
             Name = request.Name,
-            DayOrder = request.Order,
+            DayOrder = request.DayOrder, // Corretto da request.Order a request.DayOrder
             Notes = request.Notes,
             Exercises = new List<Exercise>() // Parte vuoto!
         };

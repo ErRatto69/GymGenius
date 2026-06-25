@@ -34,14 +34,14 @@ public record CreateWorkoutDto(
 );
 
 public record CreateExerciseDto(
-    [Required] string ExerciseName, 
+    [Required] string Name, // Corretto da ExerciseName a Name
     [Range(1, 100)] int Order, 
     string? Notes, 
     List<CreateSetDto>? Sets
 );
 
 public record CreateSetDto(
-    [Range(1, 50)] int SetNumber, 
+    [Range(1, 50)] int Number, // Corretto da SetNumber a Number
     [Required] string TargetReps, 
     [Range(0, 600)] int TargetRestSeconds, 
     string? TargetWeight, 
