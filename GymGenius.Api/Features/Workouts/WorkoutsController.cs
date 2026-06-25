@@ -9,19 +9,19 @@ namespace GymGenius.Api.Features.Workouts;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
-public class WorkoutsController : ControllerBase
+[Route("api/splits")]
+public class SplitsController : ControllerBase
 {
     private readonly GymDbContext _context;
 
-    public WorkoutsController(GymDbContext context)
+    public SplitsController(GymDbContext context)
     {
         _context = context;
     }
 
     private string GetUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     
-    [HttpPost("splits")]
+    [HttpPost]
     public async Task<IActionResult> CreateSplit([FromBody] CreateSplitRequest request)
     {
         var userId = GetUserId();
@@ -62,7 +62,7 @@ public class WorkoutsController : ControllerBase
         return Ok(new { Message = "Scheda creata con successo!", SplitId = split.Id });
     }
 
-    [HttpGet("splits")]
+    [HttpGet]
     public async Task<ActionResult<List<SplitSummaryResponse>>> GetMySplits()
     {
         var userId = GetUserId();
@@ -77,7 +77,7 @@ public class WorkoutsController : ControllerBase
         return Ok(splits);
     }
     
-    [HttpGet("splits/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetSplitDetails(Guid id)
     {
         var userId = GetUserId();
@@ -90,10 +90,40 @@ public class WorkoutsController : ControllerBase
 
         if (split == null) return NotFound("Scheda non trovata.");
 
-        return Ok(split);
+        var response = new SplitDetailsResponse(
+            split.Id,
+            split.Title,
+            split.Description,
+            split.Goal,
+            split.CycleLengthDays,
+            split.IsAiGenerated,
+            split.CreatedAt,
+            split.Workouts.Select(w => new WorkoutDetailsResponse(
+                w.Id,
+                w.Name,
+                w.DayOrder,
+                w.Notes,
+                w.Exercises.Select(e => new ExerciseDetailsResponse(
+                    e.Id,
+                    e.Name,
+                    e.Order,
+                    e.Notes,
+                    e.Sets.Select(s => new SetDetailsResponse(
+                        s.Id,
+                        s.Number,
+                        s.TargetReps,
+                        s.TargetRestSeconds,
+                        s.TargetWeight,
+                        s.Notes
+                    )).ToList()
+                )).ToList()
+            )).ToList()
+        );
+
+        return Ok(response);
     }
     
-    [HttpDelete("splits/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSplit(Guid id)
     {
         var userId = GetUserId();
@@ -107,7 +137,7 @@ public class WorkoutsController : ControllerBase
         return Ok(new { Message = "Scheda eliminata." });
     }
     
-    [HttpPost("splits/{splitId}/workouts")]
+    [HttpPost("{splitId}/workouts")]
     public async Task<IActionResult> AddWorkoutToSplit(Guid splitId, [FromBody] CreateWorkoutDto request)
     {
         var userId = GetUserId();
@@ -141,5 +171,42 @@ public class WorkoutsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok(new { Message = "Allenamento aggiunto!", WorkoutId = workout.Id });
+    }
+    
+    [HttpPut("{splitId}/workouts/{workoutId}")]
+    public async Task<IActionResult> UpdateWorkoutInSplit(Guid splitId, Guid workoutId, [FromBody] UpdateWorkoutDto request)
+    {
+        var userId = GetUserId();
+        
+        var isOwner = await _context.Splits.AnyAsync(s => s.Id == splitId && s.UserId == userId);
+        if (!isOwner) return NotFound("Scheda non trovata.");
+
+        var workout = await _context.Workouts.FirstOrDefaultAsync(w => w.Id == workoutId && w.SplitId == splitId);
+        if (workout == null) return NotFound("Allenamento non trovato.");
+        
+        workout.Name = request.Name;
+        workout.DayOrder = request.DayOrder;
+        workout.Notes = request.Notes;
+
+        await _context.SaveChangesAsync();
+        return Ok(new { Message = "Allenamento aggiornato con successo!" });
+    }
+    
+    [HttpDelete("{splitId}/workouts/{workoutId}")]
+    public async Task<IActionResult> DeleteWorkoutFromSplit(Guid splitId, Guid workoutId)
+    {
+        var userId = GetUserId();
+
+        // Controllo di sicurezza preventivo sulla titolarità della scheda
+        var isOwner = await _context.Splits.AnyAsync(s => s.Id == splitId && s.UserId == userId);
+        if (!isOwner) return NotFound("Scheda non trovata.");
+
+        var workout = await _context.Workouts.FirstOrDefaultAsync(w => w.Id == workoutId && w.SplitId == splitId);
+        if (workout == null) return NotFound("Allenamento non trovato.");
+
+        _context.Workouts.Remove(workout);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { Message = "Allenamento eliminato dalla scheda con successo!" });
     }
 }
