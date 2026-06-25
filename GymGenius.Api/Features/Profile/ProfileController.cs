@@ -1,4 +1,5 @@
-﻿using GymGenius.Api.Domain.Entities;
+﻿using System.Security.Claims;
+using GymGenius.Api.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace GymGenius.Api.Features.Profile;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/profile")]
 public class ProfileController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
@@ -17,11 +18,11 @@ public class ProfileController : ControllerBase
     [HttpPut("update")]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
     {
-        var userEmail = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
-        if (userEmail == null) return Unauthorized();
-
-        var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user == null) return NotFound();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null) return Unauthorized();
+        
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return NotFound("Utente non trovato.");
 
         user.FirstName = request.FirstName;
         user.LastName = request.LastName;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GymGenius.Api.Features.Auth;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
@@ -57,12 +57,14 @@ public class AuthController : ControllerBase
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         await _userManager.UpdateAsync(user);
-
+        
         return Ok(new AuthResponse(
-            accessToken, refreshToken, user.Email!, user.UserName!,
-            user.FirstName ?? "", user.LastName ?? "",
-            user.PreferredFoods, user.DislikedFoods, user.Allergies, 
-            user.Injuries, user.FitnessGoal, user.AvailableEquipment
+            accessToken, 
+            refreshToken, 
+            user.Email!, 
+            user.UserName!,
+            user.FirstName ?? "", 
+            user.LastName ?? ""
         ));
     }
 }

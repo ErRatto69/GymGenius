@@ -22,11 +22,5 @@ public record AuthResponse(
     string Email, 
     string Username,
     string FirstName, 
-    string LastName,
-    List<string>? PreferredFoods,
-    List<string>? DislikedFoods,
-    List<string>? Allergies,
-    List<string>? Injuries,
-    string? FitnessGoal,
-    string? AvailableEquipment
+    string LastName
 );
