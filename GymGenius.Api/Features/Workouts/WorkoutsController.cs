@@ -34,26 +34,26 @@ public class WorkoutsController : ControllerBase
             Goal = request.Goal,
             CycleLengthDays = request.CycleLengthDays,
             IsAiGenerated = false,
-            Workouts = request.Workouts.Select(w => new Workout
+            Workouts = request.Workouts?.Select(w => new Workout
             {
                 Name = w.Name,
-                DayOrder = w.DayOrder, // Corretto da w.Order a w.DayOrder
+                DayOrder = w.DayOrder,
                 Notes = w.Notes,
-                Exercises = w.Exercises.Select(e => new Exercise
+                Exercises = w.Exercises?.Select(e => new Exercise
                 {
                     Name = e.Name,
                     Order = e.Order,
                     Notes = e.Notes,
-                    Sets = e.Sets.Select(s => new Set
+                    Sets = e.Sets?.Select(s => new Set
                     {
                         Number = s.Number,
                         TargetReps = s.TargetReps,
                         TargetRestSeconds = s.TargetRestSeconds,
                         TargetWeight = s.TargetWeight,
                         Notes = s.Notes
-                    }).ToList()
-                }).ToList()
-            }).ToList()
+                    }).ToList() ?? new List<Set>()
+                }).ToList() ?? new List<Exercise>()
+            }).ToList() ?? new List<Workout>()
         };
 
         _context.Splits.Add(split);
@@ -119,9 +119,22 @@ public class WorkoutsController : ControllerBase
         {
             SplitId = splitId,
             Name = request.Name,
-            DayOrder = request.DayOrder, // Corretto da request.Order a request.DayOrder
+            DayOrder = request.DayOrder,
             Notes = request.Notes,
-            Exercises = new List<Exercise>() // Parte vuoto!
+            Exercises = request.Exercises?.Select(e => new Exercise
+            {
+                Name = e.Name,
+                Order = e.Order,
+                Notes = e.Notes,
+                Sets = e.Sets?.Select(s => new Set
+                {
+                    Number = s.Number,
+                    TargetReps = s.TargetReps,
+                    TargetRestSeconds = s.TargetRestSeconds,
+                    TargetWeight = s.TargetWeight,
+                    Notes = s.Notes
+                }).ToList() ?? new List<Set>()
+            }).ToList() ?? new List<Exercise>()
         };
 
         _context.Workouts.Add(workout);
