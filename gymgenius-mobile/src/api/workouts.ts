@@ -27,3 +27,30 @@ export const addWorkoutToSplit = async (splitId: string, data: { name: string; d
     const { data: response } = await apiClient.post(`/workouts/splits/${splitId}/workouts`, data);
     return response;
 };
+
+export interface WorkoutSummary {
+    id: string;
+    name: string;
+    dayOrder: number;
+}
+
+export interface SplitDetail extends SplitSummary {
+    workouts: WorkoutSummary[];
+}
+
+export const getSplitDetails = async (splitId: string): Promise<SplitDetail> => {
+    const { data } = await apiClient.get(`/workouts/splits/${splitId}`);
+    return data;
+};
+
+export const updateWorkoutInSplit = async (
+    splitId: string,
+    workoutId: string,
+    payload: { name: string; dayOrder: number }
+): Promise<void> => {
+    await apiClient.put(`/workouts/splits/${splitId}/workouts/${workoutId}`, payload);
+};
+
+export const deleteWorkoutFromSplit = async (splitId: string, workoutId: string): Promise<void> => {
+    await apiClient.delete(`/workouts/splits/${splitId}/workouts/${workoutId}`);
+};

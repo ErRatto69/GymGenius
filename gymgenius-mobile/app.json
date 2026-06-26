@@ -22,7 +22,8 @@
       },
       "softwareKeyboardLayoutMode": "pan",
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.gymgeniusmobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -3,13 +3,14 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Activity, Flame, Weight, ChevronRight, Play } from 'lucide-react-native';
 import { StatCard } from '../components/StatCard';
-import {useTranslation} from "react-i18next";
-import {useAuthStore} from "../store/useAuthStore";
+import { useTranslation } from "react-i18next";
+import { useAuthStore } from "../store/useAuthStore";
 
 export function HomeScreen() {
-
     const { user } = useAuthStore();
     const { t } = useTranslation();
+
+    const userInitial = (user?.username?.[0] || '?').toUpperCase();
 
     return (
         <SafeAreaView className="flex-1 bg-black">
@@ -17,10 +18,10 @@ export function HomeScreen() {
                 <View className="flex-row items-center justify-between mb-8 mt-2">
                     <View>
                         <Text className="text-zinc-400 text-sm uppercase tracking-wider">{t('common.welcomeBack')}</Text>
-                        <Text className="text-white text-3xl font-bold">{user?.username}</Text>
+                        <Text className="text-white text-3xl font-bold">{user?.username || 'Guest'}</Text>
                     </View>
                     <View className="w-12 h-12 bg-zinc-800 rounded-full items-center justify-center border border-cyan-500">
-                        <Text className="text-cyan-400 font-bold">{user?.username.at(0)?.toUpperCase()}</Text>
+                        <Text className="text-cyan-400 font-bold">{userInitial}</Text>
                     </View>
                 </View>
 

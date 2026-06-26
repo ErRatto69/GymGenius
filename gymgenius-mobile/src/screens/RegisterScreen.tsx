@@ -1,16 +1,24 @@
 ﻿import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import apiClient from '../api/client';
+import { TagInput } from '../components/TagInput';
+import { RegisterScreenProps } from '../navigation/types';
 
 const GOALS = ["Dimagrimento", "Ipertrofia", "Forza", "Mantenimento"];
 const EQUIPMENT = ["Palestra Completa", "Pesi a Casa", "Corpo Libero"];
 
-// SPOSTATI FUORI: Ora React non li distruggerà ad ogni tasto premuto!
 const SectionTitle = ({ title }: { title: string }) => (
     <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-6 mb-3">{title}</Text>
 );
 
-const FormInput = ({ placeholder, value, onChange, secure = false }: any) => (
+interface FormInputProps {
+    placeholder: string;
+    value: string;
+    onChange: (text: string) => void;
+    secure?: boolean;
+}
+
+const FormInput = ({ placeholder, value, onChange, secure = false }: FormInputProps) => (
     <TextInput
         className="bg-zinc-900 text-white p-4 rounded-xl border border-zinc-800 mb-3"
         placeholder={placeholder} placeholderTextColor="#71717a"
@@ -18,7 +26,13 @@ const FormInput = ({ placeholder, value, onChange, secure = false }: any) => (
     />
 );
 
-const ChipSelector = ({ options, selected, onSelect }: any) => (
+interface ChipSelectorProps {
+    options: string[];
+    selected: string;
+    onSelect: (option: string) => void;
+}
+
+const ChipSelector = ({ options, selected, onSelect }: ChipSelectorProps) => (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row mb-2">
         {options.map((opt: string) => (
             <TouchableOpacity key={opt} onPress={() => onSelect(opt)}
@@ -30,10 +44,22 @@ const ChipSelector = ({ options, selected, onSelect }: any) => (
     </ScrollView>
 );
 
-export function RegisterScreen({ navigation }: any) {
-    const [form, setForm] = useState({
+export function RegisterScreen({ navigation }: RegisterScreenProps) {
+    const [form, setForm] = useState<{
+        email: string;
+        username: string;
+        password: string;
+        firstName: string;
+        lastName: string;
+        preferredFoods: string[];
+        dislikedFoods: string[];
+        allergies: string[];
+        injuries: string[];
+        fitnessGoal: string;
+        availableEquipment: string;
+    }>({
         email: '', username: '', password: '', firstName: '', lastName: '',
-        preferredFoods: '', dislikedFoods: '', allergies: '', injuries: '',
+        preferredFoods: [], dislikedFoods: [], allergies: [], injuries: [],
         fitnessGoal: 'Ipertrofia', availableEquipment: 'Palestra Completa'
     });
     const [loading, setLoading] = useState(false);
@@ -42,16 +68,8 @@ export function RegisterScreen({ navigation }: any) {
         if (!form.email || !form.username || !form.password || !form.firstName) return Alert.alert('Errore', 'Compila i dati obbligatori');
         setLoading(true);
 
-        const payload = {
-            ...form,
-            preferredFoods: form.preferredFoods.split(',').map(s => s.trim()).filter(Boolean),
-            dislikedFoods: form.dislikedFoods.split(',').map(s => s.trim()).filter(Boolean),
-            allergies: form.allergies.split(',').map(s => s.trim()).filter(Boolean),
-            injuries: form.injuries.split(',').map(s => s.trim()).filter(Boolean),
-        };
-
         try {
-            await apiClient.post('/auth/register', payload);
+            await apiClient.post('/auth/register', form);
             Alert.alert('Successo', 'Account creato!', [{ text: 'OK', onPress: () => navigation.navigate('Login') }]);
         } catch (e: any) {
             Alert.alert('Errore', e.response?.data?.errors ? "Errore di validazione" : e.response?.data || 'Errore');
@@ -81,11 +99,31 @@ export function RegisterScreen({ navigation }: any) {
                 <Text className="text-zinc-400 mb-2 mt-3 text-sm">Attrezzatura</Text>
                 <ChipSelector options={EQUIPMENT} selected={form.availableEquipment} onSelect={(val:string) => setForm({...form, availableEquipment: val})} />
 
-                <SectionTitle title="Dati Fisici & Dieta (Separati da virgola)" />
-                <FormInput placeholder="Infortuni (es. Ginocchio destro, Spalla)" value={form.injuries} onChange={(t:string) => setForm({...form, injuries: t})} />
-                <FormInput placeholder="Allergie (es. Lattosio, Glutine)" value={form.allergies} onChange={(t:string) => setForm({...form, allergies: t})} />
-                <FormInput placeholder="Cibi preferiti (es. Pollo, Riso, Uova)" value={form.preferredFoods} onChange={(t:string) => setForm({...form, preferredFoods: t})} />
-                <FormInput placeholder="Cibi da evitare (es. Broccoli, Pesce)" value={form.dislikedFoods} onChange={(t:string) => setForm({...form, dislikedFoods: t})} />
+                <SectionTitle title="Dati Fisici & Dieta" />
+                <TagInput
+                    label="Infortuni"
+                    placeholder="Aggiungi infortunio (es. Ginocchio sinistro)..."
+                    tags={form.injuries}
+                    onChangeTags={(tags) => setForm({...form, injuries: tags})}
+                />
+                <TagInput
+                    label="Allergie / Intolleranze"
+                    placeholder="Aggiungi intolleranza (es. Lattosio)..."
+                    tags={form.allergies}
+                    onChangeTags={(tags) => setForm({...form, allergies: tags})}
+                />
+                <TagInput
+                    label="Cibi Preferiti"
+                    placeholder="Aggiungi cibo preferito (es. Riso)..."
+                    tags={form.preferredFoods}
+                    onChangeTags={(tags) => setForm({...form, preferredFoods: tags})}
+                />
+                <TagInput
+                    label="Cibi da Evitare"
+                    placeholder="Aggiungi cibo da evitare (es. Pesce)..."
+                    tags={form.dislikedFoods}
+                    onChangeTags={(tags) => setForm({...form, dislikedFoods: tags})}
+                />
 
                 <TouchableOpacity onPress={handleRegister} disabled={loading} className="bg-cyan-500 p-5 rounded-2xl mt-8 items-center">
                     {loading ? <ActivityIndicator color="black" /> : <Text className="font-bold text-xl text-black">Crea Profilo</Text>}

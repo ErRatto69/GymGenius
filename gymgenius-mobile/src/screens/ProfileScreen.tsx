@@ -3,13 +3,22 @@ import { View, Text, TouchableOpacity, ScrollView, Alert, TextInput, ActivityInd
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../store/useAuthStore';
 import apiClient from '../api/client';
-import {LogOut, Check, X, Edit3, Languages, Search} from 'lucide-react-native';
-import {useTranslation} from "react-i18next";
-import {Dropdown} from "react-native-element-dropdown";
+import { TagInput } from '../components/TagInput';
+import { LogOut, Check, X, Edit3, Languages } from 'lucide-react-native';
+import { useTranslation } from "react-i18next";
+import { Dropdown } from "react-native-element-dropdown";
+import { ProfileScreenProps } from '../navigation/types';
 
 const GOALS = ["Dimagrimento", "Ipertrofia", "Forza", "Mantenimento"];
 const EQUIPMENT = ["Palestra Completa", "Pesi a Casa", "Corpo Libero"];
-const LANGUAGES_DATA = [
+
+interface LanguageItem {
+    code: string;
+    label: string;
+    flag: string;
+}
+
+const LANGUAGES_DATA: LanguageItem[] = [
     { code: 'it', label: 'Italiano', flag: '🇮🇹' },
     { code: 'en', label: 'English', flag: '🇬🇧' },
 ];
@@ -40,18 +49,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#18181b',
     },
-    dropdownSearchInput: {
-        height: 50,
-        backgroundColor: '#18181b',
-        color: 'white',
-        borderRadius: 12,
-        borderColor: '#27272a',
-        fontSize: 16,
-        paddingHorizontal: 10,
-    },
 });
 
-const EditableInput = ({ label, value, onChange, isEditing }: any) => (
+interface EditableInputProps {
+    label: string;
+    value: string;
+    onChange: (text: string) => void;
+    isEditing: boolean;
+}
+
+const EditableInput = ({ label, value, onChange, isEditing }: EditableInputProps) => (
     <View className="mb-4">
         <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-1">{label}</Text>
         <TextInput
@@ -61,7 +68,15 @@ const EditableInput = ({ label, value, onChange, isEditing }: any) => (
     </View>
 );
 
-const ChipSelector = ({ label, options, selected, onSelect, isEditing }: any) => (
+interface ChipSelectorProps {
+    label: string;
+    options: string[];
+    selected: string;
+    onSelect: (option: string) => void;
+    isEditing: boolean;
+}
+
+const ChipSelector = ({ label, options, selected, onSelect, isEditing }: ChipSelectorProps) => (
     <View className="mb-4">
         <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-2">{label}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
@@ -76,21 +91,29 @@ const ChipSelector = ({ label, options, selected, onSelect, isEditing }: any) =>
     </View>
 );
 
-export function ProfileScreen() {
+export function ProfileScreen({ navigation, route }: ProfileScreenProps) {
     const { t } = useTranslation();
-
     const { user, logout, updateUser, language, setLanguage } = useAuthStore();
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isDropdownFocus, setIsDropdownFocus] = useState(false);
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<{
+        firstName: string;
+        lastName: string;
+        fitnessGoal: string;
+        availableEquipment: string;
+        preferredFoods: string[];
+        dislikedFoods: string[];
+        allergies: string[];
+        injuries: string[];
+    }>({
         firstName: user?.firstName || '', lastName: user?.lastName || '',
         fitnessGoal: user?.fitnessGoal || '', availableEquipment: user?.availableEquipment || '',
-        preferredFoods: user?.preferredFoods?.join(', ') || '',
-        dislikedFoods: user?.dislikedFoods?.join(', ') || '',
-        allergies: user?.allergies?.join(', ') || '',
-        injuries: user?.injuries?.join(', ') || ''
+        preferredFoods: user?.preferredFoods || [],
+        dislikedFoods: user?.dislikedFoods || [],
+        allergies: user?.allergies || [],
+        injuries: user?.injuries || []
     });
 
     const handleSave = async () => {
@@ -100,10 +123,10 @@ export function ProfileScreen() {
             lastName: form.lastName.trim(),
             fitnessGoal: form.fitnessGoal,
             availableEquipment: form.availableEquipment,
-            preferredFoods: form.preferredFoods.split(',').map(s => s.trim()).filter(Boolean),
-            dislikedFoods: form.dislikedFoods.split(',').map(s => s.trim()).filter(Boolean),
-            allergies: form.allergies.split(',').map(s => s.trim()).filter(Boolean),
-            injuries: form.injuries.split(',').map(s => s.trim()).filter(Boolean),
+            preferredFoods: form.preferredFoods,
+            dislikedFoods: form.dislikedFoods,
+            allergies: form.allergies,
+            injuries: form.injuries,
         };
 
         try {
@@ -122,8 +145,10 @@ export function ProfileScreen() {
         setForm({
             firstName: user?.firstName || '', lastName: user?.lastName || '',
             fitnessGoal: user?.fitnessGoal || '', availableEquipment: user?.availableEquipment || '',
-            preferredFoods: user?.preferredFoods?.join(', ') || '', dislikedFoods: user?.dislikedFoods?.join(', ') || '',
-            allergies: user?.allergies?.join(', ') || '', injuries: user?.injuries?.join(', ') || ''
+            preferredFoods: user?.preferredFoods || [],
+            dislikedFoods: user?.dislikedFoods || [],
+            allergies: user?.allergies || [],
+            injuries: user?.injuries || []
         });
         setIsEditing(false);
     };
@@ -141,7 +166,7 @@ export function ProfileScreen() {
         return <Text className="text-zinc-600 text-lg">{t('profile.placeholderLang')}</Text>;
     };
 
-    const renderDropdownItem = (item: any) => {
+    const renderDropdownItem = (item: LanguageItem) => {
         const isSelected = item.code === language;
         return (
             <View className={`flex-row items-center justify-between p-4 ${isSelected ? 'bg-cyan-500/10' : 'bg-black'}`}>
@@ -218,10 +243,35 @@ export function ProfileScreen() {
                 <ChipSelector label="Attrezzatura Base" options={EQUIPMENT} selected={form.availableEquipment} onSelect={(val:string) => setForm({...form, availableEquipment: val})} isEditing={isEditing} />
 
                 <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-4 mb-3">{t("profile.physicalDetails")}</Text>
-                <EditableInput label="Infortuni / Problemi" value={form.injuries} onChange={(t:string) => setForm({...form, injuries: t})} isEditing={isEditing} />
-                <EditableInput label="Allergie / Intolleranze" value={form.allergies} onChange={(t:string) => setForm({...form, allergies: t})} isEditing={isEditing} />
-                <EditableInput label="Cibi Preferiti" value={form.preferredFoods} onChange={(t:string) => setForm({...form, preferredFoods: t})} isEditing={isEditing} />
-                <EditableInput label="Cibi da Evitare" value={form.dislikedFoods} onChange={(t:string) => setForm({...form, dislikedFoods: t})} isEditing={isEditing} />
+
+                <TagInput
+                    label="Infortuni / Problemi"
+                    placeholder="Aggiungi infortunio..."
+                    tags={form.injuries}
+                    onChangeTags={(tags) => setForm({...form, injuries: tags})}
+                    editable={isEditing}
+                />
+                <TagInput
+                    label="Allergie / Intolleranze"
+                    placeholder="Aggiungi intolleranza..."
+                    tags={form.allergies}
+                    onChangeTags={(tags) => setForm({...form, allergies: tags})}
+                    editable={isEditing}
+                />
+                <TagInput
+                    label="Cibi Preferiti"
+                    placeholder="Aggiungi cibo preferito..."
+                    tags={form.preferredFoods}
+                    onChangeTags={(tags) => setForm({...form, preferredFoods: tags})}
+                    editable={isEditing}
+                />
+                <TagInput
+                    label="Cibi da Evitare"
+                    placeholder="Aggiungi cibo da evitare..."
+                    tags={form.dislikedFoods}
+                    onChangeTags={(tags) => setForm({...form, dislikedFoods: tags})}
+                    editable={isEditing}
+                />
 
                 {!isEditing && (
                     <TouchableOpacity onPress={logout} className="flex-row items-center justify-center bg-zinc-900 p-4 rounded-xl mt-6 border border-red-900/30">

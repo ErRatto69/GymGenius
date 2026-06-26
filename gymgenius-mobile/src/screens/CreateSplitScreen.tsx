@@ -4,28 +4,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronRight, X, Trophy, Calendar, Type, Plus, Pencil, Trash2, Dumbbell } from 'lucide-react-native';
 import { createSplit } from '../api/workouts';
 import { useQueryClient } from '@tanstack/react-query';
+import { CreateSplitScreenProps } from '../navigation/types';
 
 const GOALS = ["Ipertrofia", "Forza", "Dimagrimento", "Mantenimento", "Powerlifting"];
 
-// Interfaccia per gestire l'allenamento in memoria prima di salvarlo
 interface LocalWorkout {
     name: string;
     dayOrder: string;
 }
 
-export function CreateSplitScreen({ navigation }: any) {
+export function CreateSplitScreen({ navigation }: CreateSplitScreenProps) {
     const queryClient = useQueryClient();
 
-    // Dati base della scheda
     const [title, setTitle] = useState('');
     const [goal, setGoal] = useState('Ipertrofia');
     const [cycleLength, setCycleLength] = useState('7');
     const [loading, setLoading] = useState(false);
 
-    // Dati degli allenamenti locali (in memoria)
     const [localWorkouts, setLocalWorkouts] = useState<LocalWorkout[]>([]);
 
-    // Gestione del Modale per Aggiungere/Modificare
     const [modalVisible, setModalVisible] = useState(false);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [workoutName, setWorkoutName] = useState('');
@@ -33,7 +30,7 @@ export function CreateSplitScreen({ navigation }: any) {
 
     const openAddModal = () => {
         setWorkoutName('');
-        setDayOrder(String(localWorkouts.length + 1)); // Suggerisce in automatico il giorno successivo
+        setDayOrder(String(localWorkouts.length + 1));
         setEditingIndex(null);
         setModalVisible(true);
     };
@@ -48,15 +45,13 @@ export function CreateSplitScreen({ navigation }: any) {
     const handleSaveModal = () => {
         if (!workoutName.trim() || !dayOrder.trim()) return;
 
-        const newWorkout = { name: workoutName, dayOrder };
+        const newWorkout = { name: workoutName.trim(), dayOrder };
 
         if (editingIndex !== null) {
-            // Modifica esistente
             const updated = [...localWorkouts];
             updated[editingIndex] = newWorkout;
             setLocalWorkouts(updated);
         } else {
-            // Aggiungi nuovo
             setLocalWorkouts([...localWorkouts, newWorkout]);
         }
         setModalVisible(false);
@@ -72,15 +67,20 @@ export function CreateSplitScreen({ navigation }: any) {
         setLoading(true);
 
         try {
+            const parsedCycle = parseInt(cycleLength, 10);
+
             const payload = {
-                title,
+                title: title.trim(),
                 goal,
-                cycleLengthDays: parseInt(cycleLength) || 7,
-                workouts: localWorkouts.map(w => ({
-                    name: w.name,
-                    dayOrder: parseInt(w.dayOrder) || 1,
-                    exercises: []
-                }))
+                cycleLengthDays: isNaN(parsedCycle) || parsedCycle <= 0 ? 7 : parsedCycle,
+                workouts: localWorkouts.map(w => {
+                    const parsedDay = parseInt(w.dayOrder, 10);
+                    return {
+                        name: w.name,
+                        dayOrder: isNaN(parsedDay) ? 1 : parsedDay,
+                        exercises: []
+                    };
+                })
             };
 
             await createSplit(payload);
@@ -116,7 +116,6 @@ export function CreateSplitScreen({ navigation }: any) {
                     <Text className="text-white text-3xl font-extrabold mb-2">Nuova Scheda</Text>
                     <Text className="text-zinc-500 text-lg mb-8">Crea la tua Split personalizzata.</Text>
 
-                    {/* Nome e Obiettivo */}
                     <View className="mb-6">
                         <View className="flex-row items-center mb-2 ml-1">
                             <Type size={16} color="#22d3ee" />
@@ -152,8 +151,11 @@ export function CreateSplitScreen({ navigation }: any) {
                         </View>
                         <View className="bg-zinc-900 flex-row items-center p-5 rounded-2xl border border-zinc-800">
                             <TextInput
-                                className="flex-1 text-white text-lg" keyboardType="number-pad"
-                                value={cycleLength} onChangeText={setCycleLength} editable={!loading}
+                                className="flex-1 text-white text-lg"
+                                keyboardType="number-pad"
+                                value={cycleLength}
+                                onChangeText={(text) => setCycleLength(text.replace(/[^0-9]/g, ''))}
+                                editable={!loading}
                             />
                             <Text className="text-zinc-600 font-bold">Giorni</Text>
                         </View>
@@ -202,7 +204,6 @@ export function CreateSplitScreen({ navigation }: any) {
                 </ScrollView>
             </KeyboardAvoidingView>
 
-            {/* MODALE PER GESTIRE L'ALLENAMENTO LOCALE */}
             <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 justify-end">
                     <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }} activeOpacity={1} onPress={() => setModalVisible(false)} />
@@ -230,7 +231,9 @@ export function CreateSplitScreen({ navigation }: any) {
                             <Text className="text-zinc-400 text-sm font-bold uppercase mb-2">Ordine Giorno (1, 2, 3...)</Text>
                             <TextInput
                                 className="bg-black text-white p-4 rounded-xl border border-zinc-800"
-                                keyboardType="number-pad" value={dayOrder} onChangeText={setDayOrder}
+                                keyboardType="number-pad"
+                                value={dayOrder}
+                                onChangeText={(text) => setDayOrder(text.replace(/[^0-9]/g, ''))}
                             />
                         </View>
 
@@ -243,7 +246,6 @@ export function CreateSplitScreen({ navigation }: any) {
                     </View>
                 </KeyboardAvoidingView>
             </Modal>
-
         </SafeAreaView>
     );
 }

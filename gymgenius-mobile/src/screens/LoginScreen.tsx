@@ -12,10 +12,10 @@ import {
 } from 'react-native';
 import { useAuthStore } from '../store/useAuthStore';
 import apiClient from '../api/client';
-import { User as UserIcon, Lock, LogIn } from 'lucide-react-native';
-import { useTranslation } from 'react-i18next';
+import { User as UserIcon, Lock } from 'lucide-react-native';
+import { LoginScreenProps } from '../navigation/types';
 
-export function LoginScreen({ navigation }: any) {
+export function LoginScreen({ navigation }: LoginScreenProps) {
     const [usernameOrEmail, setUsernameOrEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -26,7 +26,8 @@ export function LoginScreen({ navigation }: any) {
         setLoading(true);
         try {
             const { data } = await apiClient.post('/auth/login', { usernameOrEmail, password });
-            await setAuth(data.accessToken, data);
+
+            await setAuth(data.accessToken, data.refreshToken, data);
         } catch (e: any) {
             Alert.alert('Errore', e.response?.data || 'Credenziali non valide.');
         } finally {
@@ -36,12 +37,13 @@ export function LoginScreen({ navigation }: any) {
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-black">
-            <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24, paddingBottom: 60 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-                <View className="items-center mb-10 mt-10">
-                    <View className="w-20 h-20 bg-cyan-500 rounded-3xl items-center justify-center rotate-12 mb-4">
-                        <LogIn color="black" size={40} />
+            <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }} keyboardShouldPersistTaps="handled">
+                <View className="items-center mb-8">
+                    <View className="w-20 h-20 bg-cyan-500/10 rounded-3xl items-center justify-center mb-4 border border-cyan-500/20">
+                        <UserIcon size={40} color="#22d3ee" />
                     </View>
-                    <Text className="text-white text-4xl font-extrabold tracking-tight">GymGenius</Text>
+                    <Text className="text-white text-3xl font-extrabold tracking-tight">GymGenius</Text>
+                    <Text className="text-zinc-400 text-sm mt-2 text-center">Accedi per continuare ad allenarti</Text>
                 </View>
 
                 <View className="gap-y-4">
