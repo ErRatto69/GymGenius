@@ -1,12 +1,15 @@
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using GymGenius.Api.Domain.Entities;
 using GymGenius.Api.Features.Auth;
 using GymGenius.Api.Infrastructure.Persistence;
 using GymGenius.Api.Infrastructure.Serialization;
+using GymGenius.Api.Resources;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
@@ -59,22 +62,45 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
-// 6. Configurazione Controller e Serializzazione JSON
+
+
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddLocalization();
+
+// Configurazione Controller e Serializzazione JSON
 builder.Services.AddControllers()
     .AddJsonOptions(options => {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.Converters.Add(new TrimStringConverter());
+    })
+    .AddDataAnnotationsLocalization(options => {
+        options.DataAnnotationLocalizerProvider = (type, factory) =>
+            factory.Create(typeof(SharedResource));
     });
-
-builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
-// ==========================================
-// PIPELINE DEI MIDDLEWARE (GESTIONE RICHIESTE)
-// ==========================================
+var supportedCultures = new[] {
+    new CultureInfo("en"),
+    new CultureInfo("it"),
+    new CultureInfo("de"),
+    new CultureInfo("fr"),
+    new CultureInfo("es")
+};
 
-// LIVELLO 1: Gestore Globale delle Eccezioni a Runtime
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
+localizationOptions.RequestCultureProviders.Clear();
+localizationOptions.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
+
+app.UseRequestLocalization(localizationOptions);
+
 app.UseExceptionHandler(exceptionHandlerApp =>
 {
     exceptionHandlerApp.Run(async context =>
@@ -129,7 +155,6 @@ app.MapHealthChecks("/health");
 // Mappatura dei Controller dell'API
 app.MapControllers();
 
-// LIVELLO 2: Gestione Protetta delle Migrazioni al Bootstrap dell'applicazione
 using (var scope = app.Services.CreateScope()) 
 {
     var services = scope.ServiceProvider;

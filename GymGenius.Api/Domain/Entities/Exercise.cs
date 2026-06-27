@@ -10,6 +10,6 @@ public class Exercise
     public string Name { get; set; } = string.Empty; 
     public int Order { get; set; } 
     public string? Notes { get; set; }
-
     public List<Set> Sets { get; set; } = new();
+    public List<Muscle> Muscles { get; set; } = new();
 }

@@ -3,11 +3,11 @@
 namespace GymGenius.Api.Features.Workouts;
 
 public record CreateWorkoutDto(
-    [Required(ErrorMessage = "Il nome dell'allenamento è obbligatorio.")]
-    [MinLength(2, ErrorMessage = "Il nome deve avere almeno 2 caratteri.")]
+    [Required(ErrorMessage = "WorkoutModelNameRequired")]
+    [MinLength(2, ErrorMessage = "WorkoutModelNameMinLength2")]
     string Name, 
     
-    [Range(1, 30, ErrorMessage = "Il giorno deve essere valido.")]
+    [Range(1, 30, ErrorMessage = "WorkoutModelDayValid")]
     int DayOrder, 
     
     [MaxLength(200)]
@@ -17,11 +17,11 @@ public record CreateWorkoutDto(
 );
 
 public record UpdateWorkoutDto(
-    [Required(ErrorMessage = "Il nome dell'allenamento è obbligatorio.")]
-    [MinLength(2, ErrorMessage = "Il nome deve avere almeno 2 caratteri.")]
+    [Required(ErrorMessage = "WorkoutModelNameRequired")]
+    [MinLength(2, ErrorMessage = "WorkoutModelNameMinLength2")]
     string Name, 
     
-    [Range(1, 30, ErrorMessage = "Il giorno deve essere valido.")]
+    [Range(1, 30, ErrorMessage = "WorkoutModelDayValid")]
     int DayOrder, 
     
     [MaxLength(200)]

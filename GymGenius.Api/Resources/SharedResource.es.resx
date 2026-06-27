@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="DbUnavailable" xml:space="preserve">
+        <value>El servicio de base de datos no está disponible temporalmente</value>
+    </data>
+    <data name="SplitNotFound" xml:space="preserve">
+        <value>Rutina no encontrada</value>
+    </data>
+    <data name="WorkoutAdded" xml:space="preserve">
+        <value>Entrenamiento añadido</value>
+    </data>
+    <data name="WorkoutDeleted" xml:space="preserve">
+        <value>Entrenamiento eliminado con éxito</value>
+    </data>
+    <data name="WorkoutModelDayValid" xml:space="preserve">
+        <value>El orden del día debe ser válido</value>
+    </data>
+    <data name="WorkoutModelNameMinLength2" xml:space="preserve">
+        <value>El nombre debe tener al menos 2 caracteres</value>
+    </data>
+    <data name="WorkoutModelNameRequired" xml:space="preserve">
+        <value>El nombre del entrenamiento es obligatorio</value>
+    </data>
+    <data name="WorkoutNotFound" xml:space="preserve">
+        <value>Entrenamiento no encontrado</value>
+    </data>
+    <data name="WorkoutUpdated" xml:space="preserve">
+        <value>Entrenamiento actualizado con éxito</value>
+    </data>
+</root>

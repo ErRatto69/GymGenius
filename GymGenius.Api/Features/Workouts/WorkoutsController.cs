@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
 using GymGenius.Api.Domain.Entities;
 using GymGenius.Api.Infrastructure.Persistence;
+using GymGenius.Api.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace GymGenius.Api.Features.Workouts;
 
@@ -13,8 +15,13 @@ namespace GymGenius.Api.Features.Workouts;
 public class WorkoutsController : ControllerBase
 {
     private readonly GymDbContext _context;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public WorkoutsController(GymDbContext context) => _context = context;
+    public WorkoutsController(GymDbContext context, IStringLocalizer<SharedResource> localizer)
+    {
+        _context = context;
+        _localizer = localizer;
+    }
 
     private string GetUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
@@ -23,7 +30,7 @@ public class WorkoutsController : ControllerBase
     {
         var userId = GetUserId();
         var splitExists = await _context.Splits.AnyAsync(s => s.Id == splitId && s.UserId == userId);
-        if (!splitExists) return NotFound("Scheda non trovata.");
+        if (!splitExists) return NotFound(_localizer["SplitNotFound"].Value);
 
         var workout = new Workout
         {
@@ -50,7 +57,7 @@ public class WorkoutsController : ControllerBase
         _context.Workouts.Add(workout);
         await _context.SaveChangesAsync();
 
-        return Ok(new { Message = "Allenamento aggiunto!", WorkoutId = workout.Id });
+        return Ok(new { Message = _localizer["WorkoutAdded"].Value, WorkoutId = workout.Id });
     }
 
     [HttpPut("{workoutId}")]
@@ -58,17 +65,17 @@ public class WorkoutsController : ControllerBase
     {
         var userId = GetUserId();
         var isOwner = await _context.Splits.AnyAsync(s => s.Id == splitId && s.UserId == userId);
-        if (!isOwner) return NotFound("Scheda non trovata.");
+        if (!isOwner) return NotFound(_localizer["SplitNotFound"].Value);
 
         var workout = await _context.Workouts.FirstOrDefaultAsync(w => w.Id == workoutId && w.SplitId == splitId);
-        if (workout == null) return NotFound("Allenamento non trovato.");
+        if (workout == null) return NotFound(_localizer["WorkoutNotFound"].Value);
 
         workout.Name = request.Name;
         workout.DayOrder = request.DayOrder;
         workout.Notes = request.Notes;
 
         await _context.SaveChangesAsync();
-        return Ok(new { Message = "Allenamento aggiornato con successo!" });
+        return Ok(new { Message = _localizer["WorkoutUpdated"].Value });
     }
 
     [HttpDelete("{workoutId}")]
@@ -76,14 +83,14 @@ public class WorkoutsController : ControllerBase
     {
         var userId = GetUserId();
         var isOwner = await _context.Splits.AnyAsync(s => s.Id == splitId && s.UserId == userId);
-        if (!isOwner) return NotFound("Scheda non trovata.");
+        if (!isOwner) return NotFound(_localizer["SplitNotFound"].Value);
 
         var workout = await _context.Workouts.FirstOrDefaultAsync(w => w.Id == workoutId && w.SplitId == splitId);
-        if (workout == null) return NotFound("Allenamento non trovato.");
+        if (workout == null) return NotFound(_localizer["WorkoutNotFound"].Value);
 
         _context.Workouts.Remove(workout);
         await _context.SaveChangesAsync();
 
-        return Ok(new { Message = "Allenamento eliminato." });
+        return Ok(new { Message = _localizer["WorkoutDeleted"].Value });
     }
 }
