@@ -21,28 +21,67 @@
     <data name="DbUnavailable" xml:space="preserve">
         <value>El servicio de base de datos no está disponible temporalmente</value>
     </data>
-    <data name="SplitNotFound" xml:space="preserve">
+    <data name="SplitsControllerNotFound" xml:space="preserve">
         <value>Rutina no encontrada</value>
     </data>
-    <data name="WorkoutAdded" xml:space="preserve">
+    <data name="WorkoutsControllerAdded" xml:space="preserve">
         <value>Entrenamiento añadido</value>
     </data>
-    <data name="WorkoutDeleted" xml:space="preserve">
+    <data name="WorkoutsControllerDeleted" xml:space="preserve">
         <value>Entrenamiento eliminado con éxito</value>
     </data>
-    <data name="WorkoutModelDayValid" xml:space="preserve">
+    <data name="WorkoutModelsDayValid" xml:space="preserve">
         <value>El orden del día debe ser válido</value>
     </data>
-    <data name="WorkoutModelNameMinLength2" xml:space="preserve">
+    <data name="WorkoutModelsNameMinLength" xml:space="preserve">
         <value>El nombre debe tener al menos 2 caracteres</value>
     </data>
-    <data name="WorkoutModelNameRequired" xml:space="preserve">
+    <data name="WorkoutModelsNameRequired" xml:space="preserve">
         <value>El nombre del entrenamiento es obligatorio</value>
     </data>
-    <data name="WorkoutNotFound" xml:space="preserve">
+    <data name="WorkoutsControllerNotFound" xml:space="preserve">
         <value>Entrenamiento no encontrado</value>
     </data>
-    <data name="WorkoutUpdated" xml:space="preserve">
+    <data name="WorkoutsControllerUpdated" xml:space="preserve">
         <value>Entrenamiento actualizado con éxito</value>
+    </data>
+    <data name="AuthControllerRegisterOk" xml:space="preserve">
+        <value>Registro exitoso</value>
+    </data>
+    <data name="AuthModelsEmailFormatInvalid" xml:space="preserve">
+        <value>El formato del correo electrónico no es válido</value>
+    </data>
+    <data name="AuthModelsEmailRequired" xml:space="preserve">
+        <value>El correo electrónico es obligatorio</value>
+    </data>
+    <data name="AuthModelsFirstNameMinLength" xml:space="preserve">
+        <value>El nombre debe tener al menos 2 caracteres</value>
+    </data>
+    <data name="AuthModelsFirstNameRequired" xml:space="preserve">
+        <value>El nombre es obligatorio</value>
+    </data>
+    <data name="AuthModelsLastNameMinLength" xml:space="preserve">
+        <value>El apellido debe tener al menos 2 caracteres</value>
+    </data>
+    <data name="AuthModelsLastNameRequired" xml:space="preserve">
+        <value>El apellido es obligatorio</value>
+    </data>
+    <data name="AuthModelsPasswordRequired" xml:space="preserve">
+        <value>La contraseña es obligatoria</value>
+    </data>
+    <data name="AuthModelsPasswordTooWeak" xml:space="preserve">
+        <value>La contraseña debe tener al menos 8 caracteres e incluir una mayúscula, una minúscula, un número y un carácter especial</value>
+    </data>
+    <data name="AuthModelsUsernameMinLength" xml:space="preserve">
+        <value>El nombre de usuario debe tener al menos 4 caracteres</value>
+    </data>
+    <data name="AuthModelsUsernameRequired" xml:space="preserve">
+        <value>El nombre de usuario es obligatorio</value>
+    </data>
+    <data name="AuthModelsUserOrEmailRequired" xml:space="preserve">
+        <value>Se requiere el nombre de usuario o el correo electrónico</value>
+    </data>
+    <data name="AuthControllerLoginOk" xml:space="preserve">
+        <value>Inicio de sesión realizado con éxito</value>
     </data>
 </root>

@@ -30,7 +30,7 @@ public class WorkoutsController : ControllerBase
     {
         var userId = GetUserId();
         var splitExists = await _context.Splits.AnyAsync(s => s.Id == splitId && s.UserId == userId);
-        if (!splitExists) return NotFound(_localizer["SplitNotFound"].Value);
+        if (!splitExists) return NotFound(_localizer["SplitsControllerNotFound"].Value);
 
         var workout = new Workout
         {
@@ -57,7 +57,7 @@ public class WorkoutsController : ControllerBase
         _context.Workouts.Add(workout);
         await _context.SaveChangesAsync();
 
-        return Ok(new { Message = _localizer["WorkoutAdded"].Value, WorkoutId = workout.Id });
+        return Ok(new { Message = _localizer["WorkoutsControllerAdded"].Value, WorkoutId = workout.Id });
     }
 
     [HttpPut("{workoutId}")]
@@ -65,17 +65,17 @@ public class WorkoutsController : ControllerBase
     {
         var userId = GetUserId();
         var isOwner = await _context.Splits.AnyAsync(s => s.Id == splitId && s.UserId == userId);
-        if (!isOwner) return NotFound(_localizer["SplitNotFound"].Value);
+        if (!isOwner) return NotFound(_localizer["SplitsControllerNotFound"].Value);
 
         var workout = await _context.Workouts.FirstOrDefaultAsync(w => w.Id == workoutId && w.SplitId == splitId);
-        if (workout == null) return NotFound(_localizer["WorkoutNotFound"].Value);
+        if (workout == null) return NotFound(_localizer["WorkoutsControllerNotFound"].Value);
 
         workout.Name = request.Name;
         workout.DayOrder = request.DayOrder;
         workout.Notes = request.Notes;
 
         await _context.SaveChangesAsync();
-        return Ok(new { Message = _localizer["WorkoutUpdated"].Value });
+        return Ok(new { Message = _localizer["WorkoutsControllerUpdated"].Value });
     }
 
     [HttpDelete("{workoutId}")]
@@ -83,14 +83,14 @@ public class WorkoutsController : ControllerBase
     {
         var userId = GetUserId();
         var isOwner = await _context.Splits.AnyAsync(s => s.Id == splitId && s.UserId == userId);
-        if (!isOwner) return NotFound(_localizer["SplitNotFound"].Value);
+        if (!isOwner) return NotFound(_localizer["SplitsControllerNotFound"].Value);
 
         var workout = await _context.Workouts.FirstOrDefaultAsync(w => w.Id == workoutId && w.SplitId == splitId);
-        if (workout == null) return NotFound(_localizer["WorkoutNotFound"].Value);
+        if (workout == null) return NotFound(_localizer["WorkoutsControllerNotFound"].Value);
 
         _context.Workouts.Remove(workout);
         await _context.SaveChangesAsync();
 
-        return Ok(new { Message = _localizer["WorkoutDeleted"].Value });
+        return Ok(new { Message = _localizer["WorkoutsControllerDeleted"].Value });
     }
 }

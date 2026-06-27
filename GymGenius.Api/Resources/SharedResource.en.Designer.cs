@@ -38,7 +38,7 @@ namespace GymGenius.Api.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GymGenius.Api.Infrastructure.Serialization.SharedResource.en", typeof(SharedResource_en).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GymGenius.Api.Resources.SharedResource.en", typeof(SharedResource_en).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -71,72 +71,72 @@ namespace GymGenius.Api.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Split not found.
         /// </summary>
-        public static string SplitNotFound {
+        public static string SplitsControllerNotFound {
             get {
-                return ResourceManager.GetString("SplitNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Workout added.
-        /// </summary>
-        public static string WorkoutAdded {
-            get {
-                return ResourceManager.GetString("WorkoutAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Workout successfully deleted.
-        /// </summary>
-        public static string WorkoutDeleted {
-            get {
-                return ResourceManager.GetString("WorkoutDeleted", resourceCulture);
+                return ResourceManager.GetString("SplitsControllerNotFound", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The day order must be valid.
         /// </summary>
-        public static string WorkoutModelDayValid {
+        public static string WorkoutModelsDayValid {
             get {
-                return ResourceManager.GetString("WorkoutModelDayValid", resourceCulture);
+                return ResourceManager.GetString("WorkoutModelsDayValid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The name must be at least 2 characters long.
         /// </summary>
-        public static string WorkoutModelNameMinLength2 {
+        public static string WorkoutModelsNameMinLength {
             get {
-                return ResourceManager.GetString("WorkoutModelNameMinLength2", resourceCulture);
+                return ResourceManager.GetString("WorkoutModelsNameMinLength", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The workout name is required.
         /// </summary>
-        public static string WorkoutModelNameRequired {
+        public static string WorkoutModelsNameRequired {
             get {
-                return ResourceManager.GetString("WorkoutModelNameRequired", resourceCulture);
+                return ResourceManager.GetString("WorkoutModelsNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workout added.
+        /// </summary>
+        public static string WorkoutsControllerAdded {
+            get {
+                return ResourceManager.GetString("WorkoutsControllerAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workout successfully deleted.
+        /// </summary>
+        public static string WorkoutsControllerDeleted {
+            get {
+                return ResourceManager.GetString("WorkoutsControllerDeleted", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Workout not found.
         /// </summary>
-        public static string WorkoutNotFound {
+        public static string WorkoutsControllerNotFound {
             get {
-                return ResourceManager.GetString("WorkoutNotFound", resourceCulture);
+                return ResourceManager.GetString("WorkoutsControllerNotFound", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Workout successfully updated.
         /// </summary>
-        public static string WorkoutUpdated {
+        public static string WorkoutsControllerUpdated {
             get {
-                return ResourceManager.GetString("WorkoutUpdated", resourceCulture);
+                return ResourceManager.GetString("WorkoutsControllerUpdated", resourceCulture);
             }
         }
     }

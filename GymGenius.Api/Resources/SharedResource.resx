@@ -14,28 +14,67 @@
     <data name="DbUnavailable" xml:space="preserve">
         <value>Database service is temporarly unavailable</value>
     </data>
-    <data name="SplitNotFound" xml:space="preserve">
+    <data name="SplitsControllerNotFound" xml:space="preserve">
         <value>Split not found</value>
     </data>
-    <data name="WorkoutAdded" xml:space="preserve">
+    <data name="WorkoutsControllerAdded" xml:space="preserve">
         <value>Workout added</value>
     </data>
-    <data name="WorkoutDeleted" xml:space="preserve">
+    <data name="WorkoutsControllerDeleted" xml:space="preserve">
         <value>Workout successfully deleted</value>
     </data>
-    <data name="WorkoutModelDayValid" xml:space="preserve">
+    <data name="WorkoutModelsDayValid" xml:space="preserve">
         <value>The day order must be valid</value>
     </data>
-    <data name="WorkoutModelNameMinLength2" xml:space="preserve">
+    <data name="WorkoutModelsNameMinLength" xml:space="preserve">
         <value>The name must be at least 2 characters long</value>
     </data>
-    <data name="WorkoutModelNameRequired" xml:space="preserve">
+    <data name="WorkoutModelsNameRequired" xml:space="preserve">
         <value>The workout name is required</value>
     </data>
-    <data name="WorkoutNotFound" xml:space="preserve">
+    <data name="WorkoutsControllerNotFound" xml:space="preserve">
         <value>Workout not found</value>
     </data>
-    <data name="WorkoutUpdated" xml:space="preserve">
+    <data name="WorkoutsControllerUpdated" xml:space="preserve">
         <value>Workout successfully updated</value>
+    </data>
+    <data name="AuthModelsEmailRequired" xml:space="preserve">
+        <value>The email address is required</value>
+    </data>
+    <data name="AuthModelsEmailFormatInvalid" xml:space="preserve">
+        <value>The email address format is invalid</value>
+    </data>
+    <data name="AuthModelsUsernameRequired" xml:space="preserve">
+        <value>The username is required</value>
+    </data>
+    <data name="AuthModelsUsernameMinLength" xml:space="preserve">
+        <value>The username must be at least 4 characters long</value>
+    </data>
+    <data name="AuthModelsPasswordRequired" xml:space="preserve">
+        <value>The password is required</value>
+    </data>
+    <data name="AuthModelsPasswordTooWeak" xml:space="preserve">
+        <value>The password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number and a special character</value>
+    </data>
+    <data name="AuthModelsFirstNameRequired" xml:space="preserve">
+        <value>The first name is required</value>
+    </data>
+    <data name="AuthModelsFirstNameMinLength" xml:space="preserve">
+        <value>The first name must be at least 2 characters long</value>
+    </data>
+    <data name="AuthModelsLastNameRequired" xml:space="preserve">
+        <value>The last name is required</value>
+    </data>
+    <data name="AuthModelsLastNameMinLength" xml:space="preserve">
+        <value>The last name must be at least 2 characters long</value>
+    </data>
+    <data name="AuthModelsUserOrEmailRequired" xml:space="preserve">
+        <value>Username or email address is required</value>
+    </data>
+    <data name="AuthControllerRegisterOk" xml:space="preserve">
+        <value>Registration successful</value>
+    </data>
+    <data name="AuthControllerLoginOk" xml:space="preserve">
+        <value>Login successful</value>
     </data>
 </root>

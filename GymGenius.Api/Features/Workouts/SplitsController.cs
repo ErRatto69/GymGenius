@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
 using GymGenius.Api.Domain.Entities;
 using GymGenius.Api.Infrastructure.Persistence;
+using GymGenius.Api.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace GymGenius.Api.Features.Workouts;
 
@@ -13,8 +15,13 @@ namespace GymGenius.Api.Features.Workouts;
 public class SplitsController : ControllerBase
 {
     private readonly GymDbContext _context;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public SplitsController(GymDbContext context) => _context = context;
+    public SplitsController(GymDbContext context, IStringLocalizer<SharedResource> localizer)
+    {
+        _context = context;
+        _localizer = localizer;
+    }
 
     private string GetUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     

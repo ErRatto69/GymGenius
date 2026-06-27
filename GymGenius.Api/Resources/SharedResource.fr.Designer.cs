@@ -60,6 +60,123 @@ namespace GymGenius.Api.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connexion réussie.
+        /// </summary>
+        internal static string AuthControllerLoginOk {
+            get {
+                return ResourceManager.GetString("AuthControllerLoginOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inscription réussie.
+        /// </summary>
+        internal static string AuthControllerRegisterOk {
+            get {
+                return ResourceManager.GetString("AuthControllerRegisterOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le format de l&apos;adresse e-mail est invalide.
+        /// </summary>
+        internal static string AuthModelsEmailFormatInvalid {
+            get {
+                return ResourceManager.GetString("AuthModelsEmailFormatInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to L&apos;adresse e-mail est obligatoire.
+        /// </summary>
+        internal static string AuthModelsEmailRequired {
+            get {
+                return ResourceManager.GetString("AuthModelsEmailRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le prénom doit comporter au moins 2 caractères.
+        /// </summary>
+        internal static string AuthModelsFirstNameMinLength {
+            get {
+                return ResourceManager.GetString("AuthModelsFirstNameMinLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le prénom est obligatoire.
+        /// </summary>
+        internal static string AuthModelsFirstNameRequired {
+            get {
+                return ResourceManager.GetString("AuthModelsFirstNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le nom de famille doit comporter au moins 2 caractères.
+        /// </summary>
+        internal static string AuthModelsLastNameMinLength {
+            get {
+                return ResourceManager.GetString("AuthModelsLastNameMinLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le nom de famille est obligatoire.
+        /// </summary>
+        internal static string AuthModelsLastNameRequired {
+            get {
+                return ResourceManager.GetString("AuthModelsLastNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le mot de passe est obligatoire.
+        /// </summary>
+        internal static string AuthModelsPasswordRequired {
+            get {
+                return ResourceManager.GetString("AuthModelsPasswordRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le mot de passe doit comporter au moins 8 caractères et contenir une majuscule, une minuscule, un chiffre et un caractère spécial.
+        /// </summary>
+        internal static string AuthModelsPasswordTooWeak {
+            get {
+                return ResourceManager.GetString("AuthModelsPasswordTooWeak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le nom d&apos;utilisateur doit comporter au moins 4 caractères.
+        /// </summary>
+        internal static string AuthModelsUsernameMinLength {
+            get {
+                return ResourceManager.GetString("AuthModelsUsernameMinLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le nom d&apos;utilisateur est obligatoire.
+        /// </summary>
+        internal static string AuthModelsUsernameRequired {
+            get {
+                return ResourceManager.GetString("AuthModelsUsernameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Le nom d&apos;utilisateur ou l&apos;adresse e-mail est obligatoire.
+        /// </summary>
+        internal static string AuthModelsUserOrEmailRequired {
+            get {
+                return ResourceManager.GetString("AuthModelsUserOrEmailRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Le service de base de données est temporairement indisponible.
         /// </summary>
         internal static string DbUnavailable {
@@ -71,72 +188,72 @@ namespace GymGenius.Api.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Programme non trouvé.
         /// </summary>
-        internal static string SplitNotFound {
+        internal static string SplitsControllerNotFound {
             get {
-                return ResourceManager.GetString("SplitNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Séance ajoutée.
-        /// </summary>
-        internal static string WorkoutAdded {
-            get {
-                return ResourceManager.GetString("WorkoutAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Séance supprimée avec succès.
-        /// </summary>
-        internal static string WorkoutDeleted {
-            get {
-                return ResourceManager.GetString("WorkoutDeleted", resourceCulture);
+                return ResourceManager.GetString("SplitsControllerNotFound", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to L&apos;ordre du jour doit être valide.
         /// </summary>
-        internal static string WorkoutModelDayValid {
+        internal static string WorkoutModelsDayValid {
             get {
-                return ResourceManager.GetString("WorkoutModelDayValid", resourceCulture);
+                return ResourceManager.GetString("WorkoutModelsDayValid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Le nom doit comporter au moins 2 caractères.
         /// </summary>
-        internal static string WorkoutModelNameMinLength2 {
+        internal static string WorkoutModelsNameMinLength {
             get {
-                return ResourceManager.GetString("WorkoutModelNameMinLength2", resourceCulture);
+                return ResourceManager.GetString("WorkoutModelsNameMinLength", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Le nom de la séance est obligatoire.
         /// </summary>
-        internal static string WorkoutModelNameRequired {
+        internal static string WorkoutModelsNameRequired {
             get {
-                return ResourceManager.GetString("WorkoutModelNameRequired", resourceCulture);
+                return ResourceManager.GetString("WorkoutModelsNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Séance ajoutée.
+        /// </summary>
+        internal static string WorkoutsControllerAdded {
+            get {
+                return ResourceManager.GetString("WorkoutsControllerAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Séance supprimée avec succès.
+        /// </summary>
+        internal static string WorkoutsControllerDeleted {
+            get {
+                return ResourceManager.GetString("WorkoutsControllerDeleted", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Séance non trouvée.
         /// </summary>
-        internal static string WorkoutNotFound {
+        internal static string WorkoutsControllerNotFound {
             get {
-                return ResourceManager.GetString("WorkoutNotFound", resourceCulture);
+                return ResourceManager.GetString("WorkoutsControllerNotFound", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Séance mise à jour avec succès.
         /// </summary>
-        internal static string WorkoutUpdated {
+        internal static string WorkoutsControllerUpdated {
             get {
-                return ResourceManager.GetString("WorkoutUpdated", resourceCulture);
+                return ResourceManager.GetString("WorkoutsControllerUpdated", resourceCulture);
             }
         }
     }

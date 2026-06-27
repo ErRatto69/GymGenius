@@ -1,6 +1,8 @@
 ﻿using GymGenius.Api.Domain.Entities;
+using GymGenius.Api.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace GymGenius.Api.Features.Auth;
 
@@ -10,11 +12,13 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
     private readonly ITokenService _tokenService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public AuthController(UserManager<User> userManager, ITokenService tokenService)
+    public AuthController(UserManager<User> userManager, ITokenService tokenService, IStringLocalizer<SharedResource> localizer)
     {
         _userManager = userManager;
         _tokenService = tokenService;
+        _localizer = localizer;
     }
 
     [HttpPost("register")]
@@ -39,7 +43,7 @@ public class AuthController : ControllerBase
 
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
-        return Ok(new { Message = "Utente creato." });
+        return Ok(new { Message = _localizer["AuthControllerRegisterOk"].Value });
     }
 
     [HttpPost("login")]
@@ -50,7 +54,7 @@ public class AuthController : ControllerBase
             : await _userManager.FindByNameAsync(request.UsernameOrEmail);
         
         if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
-            return Unauthorized("Credenziali non valide.");
+            return Unauthorized(_localizer["AuthControllerLoginOk"].Value);
 
         var accessToken = _tokenService.GenerateAccessToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken();
