@@ -13,9 +13,11 @@ import './src/libs/i18n';
 import { MainTabNavigator } from './src/navigation/MainTabNavigator';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';
-import {CreateSplitScreen} from "./src/screens/CreateSplitScreen";
+import { CreateSplitScreen } from "./src/screens/CreateSplitScreen";
+import { SplitDetailScreen } from "./src/screens/SplitDetailScreen";
+import { RootStackParamList } from "./src/navigation/types";
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const queryClient = new QueryClient();
 
 export default function App() {
@@ -41,8 +43,8 @@ export default function App() {
                         {token ? (
                             <>
                                 <Stack.Screen name="Main" component={MainTabNavigator} />
-                                {}
                                 <Stack.Screen name="CreateSplit" component={CreateSplitScreen} />
+                                <Stack.Screen name="SplitDetail" component={SplitDetailScreen} />
                             </>
                         ) : (
                             <>

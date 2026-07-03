@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, Alert, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChevronRight, X, Trophy, Calendar, Type, Plus, Pencil, Trash2, Dumbbell } from 'lucide-react-native';
+import { X, Trophy, Calendar, Type, Plus, Pencil, Trash2, Dumbbell } from 'lucide-react-native';
 import { createSplit } from '../api/workouts';
 import { useQueryClient } from '@tanstack/react-query';
 import { CreateSplitScreenProps } from '../navigation/types';
@@ -91,12 +91,7 @@ export function CreateSplitScreen({ navigation }: CreateSplitScreenProps) {
             ]);
 
         } catch (error: any) {
-            console.log("Errore API:", error.response?.data);
-            const errorMsg = error.response?.data?.errors
-                ? JSON.stringify(error.response.data.errors)
-                : error.response?.data || error.message;
-
-            Alert.alert("Errore di Creazione", errorMsg);
+            Alert.alert("Errore di Creazione", "Impossibile salvare la scheda.");
         } finally {
             setLoading(false);
         }
@@ -162,9 +157,7 @@ export function CreateSplitScreen({ navigation }: CreateSplitScreenProps) {
                     </View>
 
                     <View className="mb-8">
-                        <View className="flex-row justify-between items-center mb-4">
-                            <Text className="text-white text-xl font-bold">Allenamenti ({localWorkouts.length})</Text>
-                        </View>
+                        <Text className="text-white text-xl font-bold mb-4">Allenamenti ({localWorkouts.length})</Text>
 
                         {localWorkouts.map((w, index) => (
                             <View key={index} className="bg-zinc-900 p-4 rounded-xl mb-3 border border-zinc-800 flex-row justify-between items-center">
@@ -204,12 +197,20 @@ export function CreateSplitScreen({ navigation }: CreateSplitScreenProps) {
                 </ScrollView>
             </KeyboardAvoidingView>
 
-            <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>
-                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 justify-end">
-                    <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }} activeOpacity={1} onPress={() => setModalVisible(false)} />
+            {modalVisible && (
+                <View className="absolute inset-0 z-50 justify-end">
+                    <TouchableOpacity
+                        className="absolute inset-0 bg-black/60"
+                        activeOpacity={1}
+                        onPress={() => setModalVisible(false)}
+                    />
 
-                    <View className="bg-zinc-900 rounded-t-3xl p-6 border-t border-zinc-800 shadow-xl pb-10">
-                        <View className="flex-row justify-between items-center mb-6">
+                    {/* Pannello reattivo alla tastiera mobile */}
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                        className="bg-zinc-900 rounded-t-3xl border-t border-zinc-800 max-h-[75%] w-full z-50"
+                    >
+                        <View className="flex-row justify-between items-center p-6 pb-2">
                             <Text className="text-white text-2xl font-bold">
                                 {editingIndex !== null ? 'Modifica Allenamento' : 'Nuovo Allenamento'}
                             </Text>
@@ -218,34 +219,36 @@ export function CreateSplitScreen({ navigation }: CreateSplitScreenProps) {
                             </TouchableOpacity>
                         </View>
 
-                        <View className="mb-4">
-                            <Text className="text-zinc-400 text-sm font-bold uppercase mb-2">Nome (es. Giorno A - Push)</Text>
-                            <TextInput
-                                className="bg-black text-white p-4 rounded-xl border border-zinc-800"
-                                placeholder="Nome dell'allenamento" placeholderTextColor="#52525b"
-                                value={workoutName} onChangeText={setWorkoutName} autoFocus
-                            />
-                        </View>
+                        <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: Platform.OS === 'ios' ? 40 : 30 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+                            <View className="mb-4">
+                                <Text className="text-zinc-400 text-sm font-bold uppercase mb-2">Nome (es. Giorno A - Push)</Text>
+                                <TextInput
+                                    className="bg-black text-white p-4 rounded-xl border border-zinc-800 text-base"
+                                    placeholder="Nome dell'allenamento" placeholderTextColor="#52525b"
+                                    value={workoutName} onChangeText={setWorkoutName} autoFocus
+                                />
+                            </View>
 
-                        <View className="mb-8">
-                            <Text className="text-zinc-400 text-sm font-bold uppercase mb-2">Ordine Giorno (1, 2, 3...)</Text>
-                            <TextInput
-                                className="bg-black text-white p-4 rounded-xl border border-zinc-800"
-                                keyboardType="number-pad"
-                                value={dayOrder}
-                                onChangeText={(text) => setDayOrder(text.replace(/[^0-9]/g, ''))}
-                            />
-                        </View>
+                            <View className="mb-6">
+                                <Text className="text-zinc-400 text-sm font-bold uppercase mb-2">Ordine Giorno (1, 2, 3...)</Text>
+                                <TextInput
+                                    className="bg-black text-white p-4 rounded-xl border border-zinc-800 text-base"
+                                    keyboardType="number-pad"
+                                    value={dayOrder}
+                                    onChangeText={(text) => setDayOrder(text.replace(/[^0-9]/g, ''))}
+                                />
+                            </View>
 
-                        <TouchableOpacity
-                            onPress={handleSaveModal} disabled={!workoutName.trim()}
-                            className={`p-4 rounded-xl items-center flex-row justify-center ${workoutName.trim() ? 'bg-cyan-500' : 'bg-zinc-800'}`}
-                        >
-                            <Text className={`font-bold text-lg ${workoutName.trim() ? 'text-black' : 'text-zinc-500'}`}>Conferma</Text>
-                        </TouchableOpacity>
-                    </View>
-                </KeyboardAvoidingView>
-            </Modal>
+                            <TouchableOpacity
+                                onPress={handleSaveModal} disabled={!workoutName.trim()}
+                                className={`p-4 rounded-xl items-center flex-row justify-center mb-4 ${workoutName.trim() ? 'bg-cyan-500' : 'bg-zinc-800'}`}
+                            >
+                                <Text className={`font-bold text-lg ${workoutName.trim() ? 'text-black' : 'text-zinc-500'}`}>Conferma</Text>
+                            </TouchableOpacity>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                </View>
+            )}
         </SafeAreaView>
     );
 }
