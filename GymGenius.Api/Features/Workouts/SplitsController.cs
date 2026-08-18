@@ -23,7 +23,11 @@ public class SplitsController : ControllerBase
         _localizer = localizer;
     }
 
-    private string GetUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    private string GetUserId() => 
+        User.FindFirstValue(ClaimTypes.NameIdentifier) 
+        ?? User.FindFirst("sub")?.Value 
+        ?? User.Claims.FirstOrDefault(c => c.Type.EndsWith("nameidentifier") || c.Type == "sub" || c.Type == "id")?.Value 
+        ?? string.Empty;
     
     [HttpPost]
     public async Task<IActionResult> CreateSplit([FromBody] CreateSplitRequest request)
@@ -48,6 +52,9 @@ public class SplitsController : ControllerBase
                     Name = e.Name,
                     Order = e.Order,
                     Notes = e.Notes,
+                    GifUrl = e.GifUrl,
+                    TargetMuscle = e.TargetMuscle,
+                    Equipment = e.Equipment,
                     Sets = e.Sets?.Select(s => new Set
                     {
                         Number = s.Number,
@@ -112,6 +119,9 @@ public class SplitsController : ControllerBase
                     e.Name,
                     e.Order,
                     e.Notes,
+                    e.GifUrl,
+                    e.TargetMuscle,
+                    e.Equipment,
                     e.Sets.Select(s => new SetDetailsResponse(
                         s.Id,
                         s.Number,

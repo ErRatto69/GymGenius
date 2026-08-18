@@ -10,6 +10,12 @@ public class Exercise
     public string Name { get; set; } = string.Empty; 
     public int Order { get; set; } 
     public string? Notes { get; set; }
+    
+    // Campi per le anteprime visive
+    public string? GifUrl { get; set; }
+    public string? TargetMuscle { get; set; }
+    public string? Equipment { get; set; }
+
     public List<Set> Sets { get; set; } = new();
     public List<Muscle> Muscles { get; set; } = new();
 }

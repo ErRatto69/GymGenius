@@ -7,17 +7,16 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, ActivityIndicator } from 'react-native';
 
 import { useAuthStore } from './src/store/useAuthStore';
-
 import './src/libs/i18n';
 
 import { MainTabNavigator } from './src/navigation/MainTabNavigator';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';
-import { CreateSplitScreen } from "./src/screens/CreateSplitScreen";
-import { SplitDetailScreen } from "./src/screens/SplitDetailScreen";
-import { RootStackParamList } from "./src/navigation/types";
+import { CreateSplitScreen } from './src/screens/CreateSplitScreen';
+import { SplitDetailScreen } from './src/screens/SplitDetailScreen';
+import { WorkoutDetailScreen } from './src/screens/WorkoutDetailScreen';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 
 export default function App() {
@@ -42,9 +41,13 @@ export default function App() {
                     <Stack.Navigator screenOptions={{ headerShown: false }}>
                         {token ? (
                             <>
+                                {/* Schermata con la barra Tab inferiore */}
                                 <Stack.Screen name="Main" component={MainTabNavigator} />
+
+                                {/* Schermate a tutto schermo quando navighi */}
                                 <Stack.Screen name="CreateSplit" component={CreateSplitScreen} />
                                 <Stack.Screen name="SplitDetail" component={SplitDetailScreen} />
+                                <Stack.Screen name="WorkoutDetail" component={WorkoutDetailScreen} />
                             </>
                         ) : (
                             <>

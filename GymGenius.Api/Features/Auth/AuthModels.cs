@@ -12,7 +12,7 @@ public record RegisterRequest(
     string Username, 
     
     [Required(ErrorMessage = "AuthModelsPasswordRequired")]
-    [RegularExpression(@"^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", ErrorMessage = "AuthModelsPasswordTooWeak")]
+    [MinLength(6, ErrorMessage = "La password deve contenere almeno 6 caratteri")]
     string Password, 
     
     [Required(ErrorMessage = "AuthModelsFirstNameRequired")]
