@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/services/authService';
+import Link from "next/link";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -44,11 +45,8 @@ export default function LoginPage() {
                         </svg>
                     </div>
                     <h2 className="text-3xl font-extrabold tracking-tighter text-slate-100">
-                        Gym<span className="text-cyan-400">Genius</span> Web
+                        Gym<span className="text-cyan-400">Genius</span>
                     </h2>
-                    <p className="mt-2 text-sm text-slate-400">
-                        Intelligent Performance.
-                    </p>
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -112,7 +110,14 @@ export default function LoginPage() {
                         </button>
                     </div>
                 </form>
+                <p className="text-center text-xs text-slate-400 mt-6">
+                    Non hai ancora un account?{' '}
+                    <Link href="/register" className="text-cyan-400 font-semibold hover:underline">
+                        Registrati
+                    </Link>
+                </p>
             </div>
+
         </div>
     );
 }
