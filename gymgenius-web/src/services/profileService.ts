@@ -1,19 +1,17 @@
-﻿import { api } from './api';
-
-export interface UpdateProfileRequest {
-    firstName: string;
-    lastName: string;
-    preferredFoods: string[];
-    dislikedFoods: string[];
-    allergies: string[];
-    injuries: string[];
-    fitnessGoal: string | null;
-    availableEquipment: string | null;
-}
+﻿import { api } from '@/services/api';
+import type {
+    UpdateProfileRequest,
+    UpdateProfileResponse,
+} from '@/types/profile';
 
 export const profileService = {
-    async updateProfile(data: UpdateProfileRequest) {
-        const response = await api.put('/api/profile/update', data);
+    async updateProfile(
+        payload: UpdateProfileRequest
+    ): Promise<UpdateProfileResponse> {
+        const response = await api.put<UpdateProfileResponse>(
+            '/profile/update',
+            payload
+        );
         return response.data;
     },
 };

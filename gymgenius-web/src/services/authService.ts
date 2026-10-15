@@ -1,23 +1,29 @@
-﻿import { api } from './api';
-import { LoginRequest, AuthResponse, RegisterRequest } from '@/types/auth';
-import { useAuthStore } from '@/store/useAuthStore';
+﻿import { api } from '@/services/api';
+import type {
+    LoginRequest,
+    LoginResponse,
+    RegisterRequest,
+    RegisterResponse,
+    RefreshTokenRequest,
+    RefreshTokenResponse,
+} from '@/types/auth';
 
 export const authService = {
-    async login(credentials: LoginRequest): Promise<AuthResponse> {
-        const response = await api.post<AuthResponse>('/auth/login', credentials); // Matches api/auth/login
-        const { accessToken, refreshToken, ...user } = response.data;
-
-        useAuthStore.getState().setAuth(user, accessToken, refreshToken);
-
+    async login(payload: LoginRequest): Promise<LoginResponse> {
+        const response = await api.post<LoginResponse>('/auth/login', payload);
         return response.data;
     },
 
-    async register(data: RegisterRequest): Promise<{ message: string }> {
-        const response = await api.post<{ message: string }>('/auth/register', data); // Matches api/auth/register
+    async register(payload: RegisterRequest): Promise<RegisterResponse> {
+        const response = await api.post<RegisterResponse>('/auth/register', payload);
         return response.data;
     },
 
-    async logout(): Promise<void> {
-        useAuthStore.getState().logout();
-    }
+    async refresh(payload: RefreshTokenRequest): Promise<RefreshTokenResponse> {
+        const response = await api.post<RefreshTokenResponse>(
+            '/auth/refresh',
+            payload
+        );
+        return response.data;
+    },
 };

@@ -3,22 +3,20 @@
     username: string;
     firstName: string;
     lastName: string;
-    preferredFoods?: string[];
-    dislikedFoods?: string[];
-    allergies?: string[];
-    injuries?: string[];
-    fitnessGoal?: string | null;
-    availableEquipment?: string | null;
-}
-
-export interface AuthResponse extends UserProfile {
-    accessToken: string;
-    refreshToken: string;
 }
 
 export interface LoginRequest {
     usernameOrEmail: string;
     password: string;
+}
+
+export interface LoginResponse {
+    accessToken: string;
+    refreshToken: string;
+    email: string;
+    username: string;
+    firstName: string;
+    lastName: string;
 }
 
 export interface RegisterRequest {
@@ -27,10 +25,17 @@ export interface RegisterRequest {
     firstName: string;
     lastName: string;
     password: string;
-    preferredFoods?: string[];
-    dislikedFoods?: string[];
-    allergies?: string[];
-    injuries?: string[];
-    fitnessGoal?: string | null;
-    availableEquipment?: string | null;
+}
+
+export interface RegisterResponse {
+    message: string;
+}
+
+export interface RefreshTokenRequest {
+    refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+    accessToken: string;
+    refreshToken: string;
 }

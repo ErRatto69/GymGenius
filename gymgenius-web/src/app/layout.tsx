@@ -1,21 +1,27 @@
+import type { Metadata } from 'next';
 import './globals.css';
-import React from 'react';
+import { QueryProvider } from '@/components/providers/QueryProvider';
+import { ToastViewport } from '@/components/ui/Toast';
 
-export const metadata = {
-  title: 'GymGenius Web',
-  description: 'AI-Powered Fitness Platform',
+export const metadata: Metadata = {
+    title: 'GymGenius | Performance & Strength Tracking',
+    description:
+        'Piattaforma essenziale per la programmazione di schede di allenamento, progressione dei carichi e generazione AI.',
 };
 
-export default function RootLayout({
-                                     children,
-                                   }: {
-  children: React.ReactNode;
-}) {
-  return (
-      <html lang="it" className="dark">
-      <body className="bg-slate-950 text-slate-100 antialiased min-h-screen">
-      {children}
-      </body>
-      </html>
-  );
+interface RootLayoutProps {
+    children: React.ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
+    return (
+        <html lang="it" className="dark">
+        <body className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+        <QueryProvider>
+            {children}
+            <ToastViewport />
+        </QueryProvider>
+        </body>
+        </html>
+    );
 }

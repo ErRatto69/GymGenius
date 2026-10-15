@@ -1,116 +1,235 @@
 ﻿'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import {
+    Layers,
+    Cpu,
+    Settings,
+    Plus,
+    Calendar,
+    ArrowUpRight,
+    Activity,
+} from 'lucide-react';
+import { workoutService } from '@/services/workoutService';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export default function DashboardPage() {
-    const router = useRouter();
-    const { user, isAuthenticated, logout } = useAuthStore();
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const user = useAuthStore((state) => state.user);
 
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsDropdownOpen(false);
-            }
-        }
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    const { data: splits = [], isLoading } = useQuery({
+        queryKey: ['splits'],
+        queryFn: workoutService.getSplits,
+    });
 
-    useEffect(() => {
-        if (!isAuthenticated) router.push('/login');
-    }, [isAuthenticated, router]);
-
-    if (!isAuthenticated || !user) return null;
+    const totalSplits = splits.length;
+    const totalWorkoutDays = splits.reduce(
+        (acc, item) => acc + (item.totalWorkouts || 0),
+        0
+    );
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-cyan-500/30">
-            {/* Navbar */}
-            <nav className="border-b border-slate-900 bg-slate-900/40 backdrop-blur-md sticky top-0 z-50">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 items-center justify-between">
-                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/dashboard')}>
-                            <svg className="h-6 w-6 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                            </svg>
-                            <span className="text-lg font-black tracking-tighter">GYM<span className="text-cyan-400">GENIUS</span></span>
-                        </div>
-
-                        {/* Menu Utente Dropdown Interattivo */}
-                        <div className="relative" ref={dropdownRef}>
-                            <button
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                className="flex items-center gap-2 focus:outline-none bg-slate-900 rounded-full p-1 pr-3 border border-slate-800 hover:border-slate-700 transition-all"
-                            >
-                                <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cyan-500 to-emerald-400 flex items-center justify-center font-bold text-slate-950 text-sm shadow-md">
-                                    {user.firstName[0]}{user.lastName[0]}
-                                </div>
-                                <span className="text-xs font-semibold text-slate-300 hidden sm:inline">{user.firstName}</span>
-                                <svg className={`h-3 w-3 text-slate-500 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-
-                            {/* Dropdown Menu Fluido */}
-                            {isDropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-slate-900 border border-slate-800 p-2 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-150 z-50">
-                                    <div className="px-3 py-2 border-b border-slate-800/60 mb-1">
-                                        <p className="text-xs font-semibold text-slate-200">{user.firstName} {user.lastName}</p>
-                                        <p className="text-[10px] text-slate-500 truncate">@{user.username}</p>
-                                    </div>
-                                    <button
-                                        onClick={() => { setIsDropdownOpen(false); router.push('/dashboard/settings'); }}
-                                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
-                                    >
-                                        Impostazioni
-                                    </button>
-                                    <button
-                                        onClick={() => { setIsDropdownOpen(false); logout(); }}
-                                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 transition-colors"
-                                    >
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            {/* Contenuto principale pulito */}
-            <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-10">
+        <div className="space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-6">
                 <div>
-                    <h1 className="text-2xl font-black tracking-tight sm:text-3xl">Pannello di Controllo</h1>
-                    <p className="text-xs text-slate-400 mt-1">Monitoraggio e configurazione macroclicli attivi.</p>
+                    <p className="text-xs font-mono uppercase tracking-widest text-cyan-400">
+                        PANNELLO OPERATIVO
+                    </p>
+                    <h1 className="text-2xl font-bold text-slate-100 mt-1">
+                        {user?.firstName
+                            ? `${user.firstName} ${user.lastName}`
+                            : user?.username}
+                    </h1>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/dashboard/splits"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs transition-all"
+                    >
+                        <Plus className="h-4 w-4" />
+                        <span>Gestisci Schede</span>
+                    </Link>
+                </div>
+            </div>
+
+            {/* Statistiche rapide */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5">
+                    <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-400 uppercase">
+              Schede Attive
+            </span>
+                        <Layers className="h-4 w-4 text-cyan-400" />
+                    </div>
+                    <p className="text-3xl font-bold font-mono text-slate-100 mt-3">
+                        {isLoading ? '—' : totalSplits}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">
+                        Programmi configurati a sistema
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {/* Card Schede */}
-                    <div onClick={() => router.push('/dashboard/splits')} className="group bg-slate-900/40 border border-slate-900 p-6 rounded-2xl hover:border-slate-800 hover:bg-slate-900/80 transition-all cursor-pointer">
-                        <div className="h-10 w-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-4 border border-cyan-500/10">
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                        </div>
-                        <h3 className="text-sm font-bold text-slate-200">Routine & Programmi</h3>
-                        <p className="text-xs text-slate-400 mt-1 leading-relaxed">Gestione completa dei microcicli di allenamento personalizzati.</p>
+                <div className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5">
+                    <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-400 uppercase">
+              Sessioni Totali
+            </span>
+                        <Calendar className="h-4 w-4 text-emerald-400" />
                     </div>
-
-                    {/* Card AI */}
-                    <div className="group bg-slate-900/20 border border-slate-950 p-6 rounded-2xl opacity-60">
-                        <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4 border border-purple-500/10">
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <h3 className="text-sm font-bold text-slate-300">Generatore AI</h3>
-                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">Algoritmo Gemini per l'ottimizzazione del volume (Disattivato).</p>
-                    </div>
+                    <p className="text-3xl font-bold font-mono text-slate-100 mt-3">
+                        {isLoading ? '—' : totalWorkoutDays}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">
+                        Giorni di allenamento strutturati
+                    </p>
                 </div>
-            </main>
+
+                <div className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5">
+                    <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-400 uppercase">
+              Motore AI
+            </span>
+                        <Activity className="h-4 w-4 text-cyan-400" />
+                    </div>
+                    <p className="text-lg font-bold text-emerald-400 mt-3">PRONTO</p>
+                    <p className="text-xs text-slate-500 mt-2">
+                        Simulatore microcicli attivo
+                    </p>
+                </div>
+            </div>
+
+            {/* Moduli rapidi */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Link
+                    href="/dashboard/splits"
+                    className="group rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 p-6 transition-all flex flex-col justify-between"
+                >
+                    <div>
+                        <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mb-4">
+                            <Layers className="h-5 w-5 text-cyan-400" />
+                        </div>
+                        <h2 className="text-base font-bold text-slate-100 group-hover:text-cyan-400 transition-colors">
+                            Archivio Schede (Splits)
+                        </h2>
+                        <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                            Crea e modifica le tue programmazioni, organizza i giorni di
+                            allenamento, gli esercizi, i carichi e i recuperi.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs font-semibold text-cyan-400 mt-6">
+                        <span>Apri programmazione</span>
+                        <ArrowUpRight className="h-4 w-4" />
+                    </div>
+                </Link>
+
+                <Link
+                    href="/dashboard/ai-generator"
+                    className="group rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-emerald-500/50 p-6 transition-all flex flex-col justify-between"
+                >
+                    <div>
+                        <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-4">
+                            <Cpu className="h-5 w-5 text-emerald-400" />
+                        </div>
+                        <h2 className="text-base font-bold text-slate-100 group-hover:text-emerald-400 transition-colors">
+                            Generatore Schede IA
+                        </h2>
+                        <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                            Configura split, frequenza settimanale e target ipertrofico o di
+                            forza per generare ed esportare una scheda strutturata.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs font-semibold text-emerald-400 mt-6">
+                        <span>Configura parametri</span>
+                        <ArrowUpRight className="h-4 w-4" />
+                    </div>
+                </Link>
+
+                <Link
+                    href="/dashboard/settings"
+                    className="group rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-600 p-6 transition-all flex flex-col justify-between"
+                >
+                    <div>
+                        <div className="h-10 w-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center mb-4">
+                            <Settings className="h-5 w-5 text-slate-300" />
+                        </div>
+                        <h2 className="text-base font-bold text-slate-100 group-hover:text-slate-200 transition-colors">
+                            Profilo & Attrezzatura
+                        </h2>
+                        <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                            Aggiorna obiettivi fisici, attrezzatura disponibile, infortuni
+                            pregressi, preferenze alimentari e lingua API.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs font-semibold text-slate-300 mt-6">
+                        <span>Modifica profilo</span>
+                        <ArrowUpRight className="h-4 w-4" />
+                    </div>
+                </Link>
+            </div>
+
+            {/* Ultime schede create */}
+            <div className="rounded-2xl bg-slate-900/60 border border-slate-800 p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300">
+                        Schede Recenti
+                    </h2>
+                    <Link
+                        href="/dashboard/splits"
+                        className="text-xs text-cyan-400 hover:text-cyan-300 font-medium"
+                    >
+                        Vedi tutte
+                    </Link>
+                </div>
+
+                {isLoading ? (
+                    <div className="space-y-3">
+                        {[1, 2].map((skeleton) => (
+                            <div
+                                key={skeleton}
+                                className="h-16 rounded-xl bg-slate-950/60 border border-slate-800 animate-pulse"
+                            />
+                        ))}
+                    </div>
+                ) : splits.length === 0 ? (
+                    <div className="text-center py-8 border border-dashed border-slate-800 rounded-xl">
+                        <p className="text-xs text-slate-400">
+                            Nessuna scheda presente in archivio.
+                        </p>
+                        <Link
+                            href="/dashboard/splits"
+                            className="inline-block mt-3 text-xs font-semibold text-cyan-400 hover:text-cyan-300"
+                        >
+                            + Crea la prima scheda
+                        </Link>
+                    </div>
+                ) : (
+                    <div className="divide-y divide-slate-800">
+                        {splits.slice(0, 4).map((split) => (
+                            <Link
+                                key={split.id}
+                                href={`/dashboard/splits/${split.id}`}
+                                className="flex items-center justify-between py-3.5 hover:bg-slate-800/30 px-3 rounded-xl transition-colors"
+                            >
+                                <div>
+                                    <p className="text-sm font-semibold text-slate-100">
+                                        {split.name}
+                                    </p>
+                                    <p className="text-xs text-slate-400 line-clamp-1">
+                                        {split.description || 'Nessuna nota descrittiva'}
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-cyan-400">
+                    {split.totalWorkouts} gg
+                  </span>
+                                    <ArrowUpRight className="h-4 w-4 text-slate-500" />
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
